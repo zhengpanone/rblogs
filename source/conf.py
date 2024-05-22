@@ -19,7 +19,7 @@ release = '1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['recommonmark','sphinx.ext.autodoc']
+extensions = ['chinese_search', 'recommonmark', 'sphinx.ext.autodoc','sphinx_copybutton']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -43,10 +43,38 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+htmlhelp_basename = 'Java Blogs'
+
+formats = ["htmlzip", "pdf", "epub"]
+
+# LaTeX 配置
+latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '10pt',
+    'preamble': '',
+    'figure_align': 'htbp',
+}
+
+latex_documents = [
+    ('index', 'mkdocs.tex', u'《Golang笔记》',
+     u'郑攀', 'manual',),
+]
+
+man_pages = [
+    ('index', 'pansblog', 'Pan\'s Blog Documentation',
+     [u'郑攀'], 1)
+]
+
+
+texinfo_documents = [
+    ('index', 'PansBlog', '《Golang博客》',
+     u'郑攀', 'PansBlog', '《Golang博客》',
+     'Miscellaneous'),
+]
 
 highlight_langeuage="go,javascript,html"
