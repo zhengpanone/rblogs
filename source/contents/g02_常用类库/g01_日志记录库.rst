@@ -1,0 +1,17 @@
+================
+1、日志记录库
+================
+
+Logrus
+============
+
+- 安装
+
+.. code-block:: shell
+
+  go get github.com/sirupsen/logrus
+
+简介
+>>>>>>>>
+
+Logrus是Go（golang）的结构化logger，与标准库logger完全API兼容，它有以下特点

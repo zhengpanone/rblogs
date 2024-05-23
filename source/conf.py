@@ -21,7 +21,15 @@ release = '1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['chinese_search', 'recommonmark', 'sphinx.ext.autodoc','sphinx_copybutton']
+# 'chinese_search', sphinxdrawio.drawio_html
+extensions = ['recommonmark', 
+              'sphinx.ext.autodoc',
+              'sphinx_copybutton',
+              'sphinx.ext.napoleon',
+              'sphinx.ext.viewcode',
+              'sphinx_markdown_tables',
+              'sphinx.ext.autosectionlabel'
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
