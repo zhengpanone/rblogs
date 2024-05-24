@@ -1,0 +1,4 @@
+{"level":"info","msg":"init run","time":"2024-05-24T12:53:21+08:00"}
+{"animal":"walrus","level":"warning","msg":"A group of walrus emerges from the ocean","size":10,"time":"2024-05-24T12:53:26+08:00"}
+[GIN] 2024/05/24 - 12:53:26 | 200 |      216.37µs |       127.0.0.1 | GET      "/hello"
+[GIN] 2024/05/24 - 12:53:28 | 404 |         459ns |       127.0.0.1 | GET      "/favicon.ico"

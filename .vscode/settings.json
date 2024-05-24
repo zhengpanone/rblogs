@@ -10,4 +10,7 @@
     "restructuredtext.updateOnTextChanged": "true",
     "restructuredtext.updateDelay": 1,
     "liveServer.settings.port": 5501,
+    "cSpell.words": [
+        "Logrus"
+    ],
 }

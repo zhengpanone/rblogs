@@ -14,4 +14,141 @@ Logrus
 简介
 >>>>>>>>
 
-Logrus是Go（golang）的结构化logger，与标准库logger完全API兼容，它有以下特点
+  Logrus是Go（golang）的结构化logger，与标准库logger完全API兼容，它有以下特点
+
+- Logrus是Go（golang）的结构化logger，与标准库logger完全API兼容，它有以下特点
+
+- 完全兼容标准日志库，拥有七种日志级别：Trace, Debug, Info, Warning, Error, Fataland Panic。
+
+- 可扩展的Hook机制，允许使用者通过Hook的方式将日志分发到任意地方
+
+  - 如本地文件系统，logstash，elasticsearch或者mq等，或者通过Hook定义日志内容和格式等
+
+- 可选的日志输出格式，内置了两种日志格式JSONFormater和TextFormatter，还可以自定义日志格式
+
+- Field机制，通过Filed机制进行结构化的日志记录
+
+- 线程安全
+
+简单使用
+>>>>>>>>>>
+
+.. literalinclude:: ./code/logrus/logrus_simple.go
+    :encoding: utf-8
+    :language: golang
+    :emphasize-lines: 8,9,10
+    :lines: 1-
+    :linenos:
+
+日志级别
+>>>>>>>>>>>>
+
+.. literalinclude:: ./code/logrus/level/logrus_log_level.go
+    :encoding: utf-8
+    :language: golang
+    :emphasize-lines: 8,9,10
+    :lines: 1-
+    :linenos:
+
+设置日志级别
+>>>>>>>>>>>>>>>
+
+.. code-block:: go
+  :linenos:
+
+  // 会记录info及以上级别 (warn, error, fatal, panic)
+  log.SetLevel(log.InfoLevel)
+
+字段
+>>>>>>>>>
+
+- Logrus鼓励通过日志字段进行谨慎的结构化日志记录，而不是冗长的、不可解析的错误消息。
+
+- 例如，区别于使用log.Fatalf("Failed to send event %s to topic %s with key %d")
+
+- 你应该使用如下方式记录更容易发现的内容
+
+.. literalinclude:: ./code/logrus/fields/logrus_fields.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+默认字段
+>>>>>>>>>>>>>>>
+
+- 通常，将一些字段始终附加到应用程序的全部或部分的日志语句中会很有帮助。
+
+- 例如，你可能希望始终在请求的上下文中记录request_id和user_ip。
+
+- 区别于在每一行日志中写上log.WithFields(log.Fields{"request_id": request_id, "user_ip": user_ip})
+
+- 你可以向下面的示例代码一样创建一个logrus.Entry去传递这些字段。
+
+.. literalinclude:: ./code/logrus/default_fields/logrus_default_fields.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+Hooks
+>>>>>>>>>>
+
+- 你可以添加日志级别的钩子（Hook）。
+
+- 例如，向异常跟踪服务发送Error、Fatal和Panic、信息到StatsD或同时将日志发送到多个位置，例如syslog。
+
+- Logrus配有内置钩子，在init中添加这些内置钩子或你自定义的钩子
+
+- 参考
+
+.. literalinclude:: ./code/logrus/hooks/logrus_hooks.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+格式化
+>>>>>>>>>>>>>>>>
+
+.. literalinclude:: ./code/logrus/format/logrus_format.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+gin中使用Logrus
+>>>>>>>>>>>>>>>>>>>
+
+.. literalinclude:: ./code/logrus/gin_logrus/gin_logrus.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+在gin中封装使用
+==================
+
+目录结构
+>>>>>>>>>>
+
+.. code-block:: text
+
+
+  gin_logrus_packing
+  ├── main.go
+  └── middleware
+    └── logger.go
+
+
+.. literalinclude:: ./code/logrus/gin_logrus_packing/main.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:
+
+.. literalinclude:: ./code/logrus/gin_logrus_packing/middleward/logger.go
+    :encoding: utf-8
+    :language: golang
+    :lines: 1-
+    :linenos:    
