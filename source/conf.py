@@ -22,14 +22,32 @@ release = '1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 # 'chinese_search', sphinxdrawio.drawio_html
+
+simplepdf_vars = {
+    'primary': '#333333',
+    'links': '#FF3333',
+}
+
 extensions = ['recommonmark', 
               'sphinx.ext.autodoc',
               'sphinx_copybutton',
               'sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
               'sphinx_markdown_tables',
-              'sphinx.ext.autosectionlabel'
+              'sphinx.ext.autosectionlabel',
+              'sphinxcontrib.inkscapeconverter',
+            #   'sphinx_simplepdf'
               ]
+
+
+# LaTeX配置
+latex_engine = 'xelatex'  # 或者 'pdflatex'，根据你的需求选择
+latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '10pt',
+    'preamble': '',
+    'figure_align': 'htbp',
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -58,7 +76,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-htmlhelp_basename = 'Java Blogs'
+htmlhelp_basename = 'Glang Blogs'
 
 formats = ["htmlzip", "pdf", "epub"]
 

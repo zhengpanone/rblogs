@@ -11,6 +11,11 @@
     "restructuredtext.updateDelay": 1,
     "liveServer.settings.port": 5501,
     "cSpell.words": [
-        "Logrus"
+        "gblogs",
+        "Glang",
+        "htmlhelp",
+        "latexpdf",
+        "Logrus",
+        "mactex"
     ],
 }
