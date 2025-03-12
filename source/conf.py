@@ -29,13 +29,13 @@ simplepdf_vars = {
 }
 
 extensions = ['recommonmark', 
-              'sphinx.ext.autodoc',
               'sphinx_copybutton',
+              'sphinx_markdown_tables',
+              'sphinxcontrib.inkscapeconverter',
+              'sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
-              'sphinx_markdown_tables',
               'sphinx.ext.autosectionlabel',
-              'sphinxcontrib.inkscapeconverter',
             #   'sphinx_simplepdf'
               ]
 
@@ -80,13 +80,6 @@ htmlhelp_basename = 'Glang Blogs'
 
 formats = ["htmlzip", "pdf", "epub"]
 
-# LaTeX 配置
-latex_elements = {
-    'papersize': 'a4paper',
-    'pointsize': '10pt',
-    'preamble': '',
-    'figure_align': 'htbp',
-}
 
 latex_documents = [
     ('index', 'mkdocs.tex', u'《Golang笔记》',
