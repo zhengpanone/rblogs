@@ -6,7 +6,8 @@ Golang语法基础
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :numbered:
    :glob:
 
    ../contents/g01_语言基础/*

@@ -6,7 +6,8 @@ Golang常用类库
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :numbered:
    :glob:
 
    ../contents/g02_常用类库/*
