@@ -85,13 +85,30 @@ Casbin 的访问控制模型由三个主要概念组成：
 
 假设，我们的策略表有如下的策略记录：
 
-.. csv-table:: Casbin 策略示例
-   :header: "p", "uid", "uri", "method", "created_at"
+.. list-table:: Casbin 策略示例
+   :header-rows: 1
+   :widths: 10 15 25 25 30
 
-   p, 886, /api/post/add, POST, 2025-01-10 08:16:01
-   p, 887, /api/post/delete, DELETE, 2025-01-10 08:20:11
-   p, 888, /api/post/list, GET, 2025-01-10 08:30:22
-
+   * - p
+     - uid
+     - uri
+     - method
+     - created_at
+   * - p
+     - 886
+     - /api/post/add
+     - POST
+     - 2025-01-10 08:16:01
+   * - p
+     - 887
+     - /api/post/delete
+     - DELETE
+     - 2025-01-10 08:20:11
+   * - p
+     - 888
+     - /api/post/list
+     - GET
+     - 2025-01-10 08:30:22
 
 那么，我们的策略可以定义为：
 
@@ -257,7 +274,7 @@ Casbin 支持多种访问控制模型，您可以根据需求选择合适的模�
 Casbin 提供了与多个编程语言和框架的集成，包括 Go、Java、Python、Node.js 等。它还提供了与常见存储（如文件、数据库等）的集成，使得权限配置可以灵活存储和管理。
 
 数据存储与策略管理
->>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Casbin 提供了多种存储方式，包括：
 
