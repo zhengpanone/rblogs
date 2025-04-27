@@ -33,7 +33,7 @@ Logrus
 简单使用
 >>>>>>>>>>
 
-.. literalinclude:: ./code/logrus/logrus_simple.go
+.. literalinclude:: ./code/1_logrus/logrus_simple.go
     :encoding: utf-8
     :language: golang
     :emphasize-lines: 8,9,10
@@ -43,7 +43,7 @@ Logrus
 日志级别
 >>>>>>>>>>>>
 
-.. literalinclude:: ./code/logrus/level/logrus_log_level.go
+.. literalinclude:: ./code/1_logrus/level/logrus_log_level.go
     :encoding: utf-8
     :language: golang
     :emphasize-lines: 8,9,10
@@ -68,7 +68,7 @@ Logrus
 
 - 你应该使用如下方式记录更容易发现的内容
 
-.. literalinclude:: ./code/logrus/fields/logrus_fields.go
+.. literalinclude:: ./code/1_logrus/fields/logrus_fields.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
@@ -85,7 +85,7 @@ Logrus
 
 - 你可以向下面的示例代码一样创建一个logrus.Entry去传递这些字段。
 
-.. literalinclude:: ./code/logrus/default_fields/logrus_default_fields.go
+.. literalinclude:: ./code/1_logrus/default_fields/logrus_default_fields.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
@@ -102,7 +102,7 @@ Hooks
 
 - 参考
 
-.. literalinclude:: ./code/logrus/hooks/logrus_hooks.go
+.. literalinclude:: ./code/1_logrus/hooks/logrus_hooks.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
@@ -111,7 +111,7 @@ Hooks
 格式化
 >>>>>>>>>>>>>>>>
 
-.. literalinclude:: ./code/logrus/format/logrus_format.go
+.. literalinclude:: ./code/1_logrus/format/logrus_format.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
@@ -120,7 +120,7 @@ Hooks
 gin中使用Logrus
 >>>>>>>>>>>>>>>>>>>
 
-.. literalinclude:: ./code/logrus/gin_logrus/gin_logrus.go
+.. literalinclude:: ./code/1_logrus/gin_logrus/gin_logrus.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
@@ -141,13 +141,13 @@ gin中使用Logrus
     └── logger.go
 
 
-.. literalinclude:: ./code/logrus/gin_logrus_packing/main.go
+.. literalinclude:: ./code/1_logrus/gin_logrus_packing/main.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
     :linenos:
 
-.. literalinclude:: ./code/logrus/gin_logrus_packing/middleward/logger.go
+.. literalinclude:: ./code/1_logrus/gin_logrus_packing/middleward/logger.go
     :encoding: utf-8
     :language: golang
     :lines: 1-
