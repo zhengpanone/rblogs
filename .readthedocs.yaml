@@ -18,12 +18,8 @@ build:
       - npm install -g puppeteer
     post_build:
       - source $HOME/.cargo/env
-      - mdbook build
+      - mdbook build docs --dest-dir $READTHEDOCS_OUTPUT/html
       - mdbook-pdf build
-  commands:
-    - cargo install mdbook
-    - cargo install mdbook-pdf
-    - mdbook build docs --dest-dir $READTHEDOCS_OUTPUT/html
 
 formats: 
   - htmlzip
