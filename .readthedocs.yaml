@@ -4,6 +4,29 @@ build:
   os: ubuntu-lts-latest
   tools:
     rust: latest
+    python: latest
+  jobs:
+    pre_build:
+      - curl -sSf https://sh.rustup.rs | sh -s -- -y
+      - source $HOME/.cargo/env
+      - cargo install mdbook
+      - cargo install mdbook-pdf
+      - cargo install mdbook-graphviz
+      - cargo install mdbook-katex
+      - cargo install mdbook-mermaid
+      - cargo install mdbook-toc
+      - npm install -g puppeteer
+    post_build:
+      - source $HOME/.cargo/env
+      - mdbook build
+      - mdbook-pdf build
   commands:
     - cargo install mdbook
+    - cargo install mdbook-pdf
     - mdbook build docs --dest-dir $READTHEDOCS_OUTPUT/html
+
+formats: 
+  - htmlzip
+  - epub
+  - pdf  # 仅用于显示下载按钮，与 mdbook-pdf 无直接关联
+

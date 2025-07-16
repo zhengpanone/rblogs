@@ -1,0 +1,41 @@
+[book]
+authors = ["郑攀"]
+language = "zh_CN"
+multilingual = false
+src = "src"
+
+[build]
+build-dir = "docs/book"   # 构建输出目录
+create-missing = true
+
+[output.html]
+default-theme = "ayu"   # 可选：light, rust, coal, navy, ayu
+preferred-dark-theme = "ayu"
+mathjax-support = true  # 如果你要用数学公式
+hash-files = true
+
+[output.html.fold]
+enable = true  # 支持折叠章节（可选）
+
+
+[output.html.print]
+enable = true           # 支持“打印”按钮（用于打印或 PDF 导出）
+
+[output.pdf]  # 如果使用 mdbook-pdf
+output-dir = "docs/pdf"
+
+# 支持 .dot 图自动渲染（Graphviz）
+[preprocessor.graphviz] # 如果你启用了图形插件（可选）
+command = "mdbook-graphviz"
+
+# 支持数学公式（LaTeX 语法）
+[preprocessor.katex]
+command = "mdbook-katex"
+
+# 支持 Mermaid 流程图、时序图等
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+# 自动生成页内目录（Table of Contents）
+[preprocessor.toc]
+command = "mdbook-toc"
