@@ -1,48 +1,9 @@
-# .readthedocs.yaml
-# Read the Docs configuration file for mdBook
 version: 2
-
-# 移除 mkdocs 配置，因为我们使用的是 mdBook
-# mkdocs:
-#   configuration: mkdocs.yml
-#   fail_on_warning: false
 
 build:
   os: ubuntu-lts-latest
   tools:
     rust: latest
-    python: latest
-    # 添加 Node.js 用于 puppeteer
-    nodejs: "18"
-  jobs:
-    pre_build:
-      # 设置 Rust 环境
-      - curl -sSf https://sh.rustup.rs | sh -s -- -y
-      - source $HOME/.cargo/env
-      # 安装 mdBook 和插件
-      - cargo install mdbook
-      - cargo install mdbook-pdf
-      - cargo install mdbook-graphviz
-      - cargo install mdbook-katex
-      - cargo install mdbook-mermaid
-      - cargo install mdbook-toc
-      # 安装 puppeteer
-      - npm install -g puppeteer
-    post_build:
-      # 构建 mdBook
-      - source $HOME/.cargo/env
-      - mdbook build docs --dest-dir $READTHEDOCS_OUTPUT/html
-      # 生成 PDF（如果需要）
-      - cd docs && mdbook-pdf build
-
-# 指定输出格式
-formats: 
-  - htmlzip
-  - epub
-  # 注意：Read the Docs 的 PDF 格式与 mdbook-pdf 是分开的
-  - pdf
-
-# 如果你有 Python 依赖，可以取消注释以下部分
-# python:
-#   install:
-#     - requirements: requirements.txt
+  commands:
+    - cargo install mdbook
+    - mdbook build docs --dest-dir $READTHEDOCS_OUTPUT/html
