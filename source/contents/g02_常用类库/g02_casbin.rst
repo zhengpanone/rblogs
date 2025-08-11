@@ -231,7 +231,7 @@ Casbin 的访问控制模型由三个主要概念组成：
 
 验证规则
 
-.. code-block:: ini
+.. code-block:: golang
   :linenos:
 
   // 权限检查，创建请求

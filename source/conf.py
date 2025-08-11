@@ -110,5 +110,5 @@ if not on_rtd:
 
 highlight_langeuage="go,javascript,html"
 
-_exts = "../exts"
+_exts = "./exts"
 sys.path.append(os.path.abspath(_exts))
