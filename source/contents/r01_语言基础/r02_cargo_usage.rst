@@ -2,7 +2,7 @@
 cargo使用
 =============
 
-cargo 是 Rust 的包管理工具和构建系统。它可以帮助你管理 Rust 项目的依赖、编译代码、运行测试等。与 Cargo 一起 还有 crate.io_，它为社区提供包注册服务，用户可以将自己的包发布到 crate.io_。
+cargo 是 Rust 的包管理工具和构建系统。它可以帮助你管理 Rust 项目的依赖、编译代码、运行测试等。与 Cargo 一起 还有 crates.io_，它为社区提供包注册服务，用户可以将自己的包发布到 crates.io_。
 
 .. csv-table:: cargo 常用命令
   :widths: 50, 70 
@@ -144,6 +144,6 @@ git 仓库作为依赖包
 
 
 
-..  _crate.io: https://crates.io/
+..  _crates.io: https://crates.io/
 
 

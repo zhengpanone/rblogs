@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rust Wasm Hello World</title>
+    </head>
+
+    <body>
+        <script type="module">
+            // 导入Wasm模块的初始化函数和导出的greet函数
+            import init, { greet } from "./pkg/hello_wasm.js";
+
+            // 初始化Wasm模块
+            init().then(() => {
+                // 调用Rust导出的greet函数，并传入参数"WebAssembly"
+                const message = greet("WebAssembly");
+
+                // 在控制台输出问候语
+                console.log(message);
+                // 也可以将问候语显示在页面上，例如创建一个段落元素并添加到页面中
+                const p = document.createElement("p");
+                p.textContent = message;
+                document.body.appendChild(p);
+            });
+        </script>
+    </body>
+</html>
