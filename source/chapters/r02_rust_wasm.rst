@@ -1,8 +1,8 @@
 ===========================
-第二章：常用类库
+第二章：Rust Wasm
 ===========================
 
-Golang常用类库
+Rust、WebAssembly
 
 
 .. toctree::
@@ -10,5 +10,5 @@ Golang常用类库
    :numbered:
    :glob:
 
-   ../contents/g02_常用类库/*
+   ../contents/r02_rust_wasm/*
 

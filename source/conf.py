@@ -8,7 +8,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'GO BLOG'
+project = 'Rust BLOG'
 copyright = '2019, zhengpanone'
 author = 'zhengpanone'
 
@@ -86,7 +86,7 @@ formats = ["htmlzip", "pdf", "epub"]
 
 
 latex_documents = [
-    ('index', 'mkdocs.tex', u'《Golang笔记》',
+    ('index', 'mkdocs.tex', u'《Rust笔记》',
      u'郑攀', 'manual',),
 ]
 
@@ -97,8 +97,8 @@ man_pages = [
 
 
 texinfo_documents = [
-    ('index', 'PansBlog', '《Golang博客》',
-     u'郑攀', 'PansBlog', '《Golang博客》',
+    ('index', 'PansBlog', '《Rust博客》',
+     u'郑攀', 'PansBlog', '《Rust博客》',
      'Miscellaneous'),
 ]
 
