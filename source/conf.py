@@ -112,3 +112,7 @@ highlight_langeuage="go,javascript,html"
 
 _exts = "./exts"
 sys.path.append(os.path.abspath(_exts))
+
+copybutton_prompt_text = "$ "
+copybutton_prompt_is_regexp = False
+

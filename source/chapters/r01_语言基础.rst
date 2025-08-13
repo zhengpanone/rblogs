@@ -2,7 +2,7 @@
 第一章：语法基础
 ===========================
 
-Golang语法基础
+Rust语法基础
 
 
 .. toctree::
@@ -10,5 +10,5 @@ Golang语法基础
    :numbered:
    :glob:
 
-   ../contents/g01_语言基础/*
+   ../contents/r01_语言基础/*
 
