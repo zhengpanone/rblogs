@@ -2,8 +2,11 @@
 Rust下载安装
 =====================
 
-安装 rustup
+rustup
 =====================
+
+安装
+----------------------
 
 在安装 Rust 之前，首先需要安装 rustup，这是 Rust 的官方安装工具和版本管理器。它可以帮助你轻松地安装和管理不同版本的 Rust。
 
@@ -65,7 +68,7 @@ Rust下载安装
 6. 如果看到与类似上面的版本信息，则表示 Rust 已成功安装。
 
 更新和卸载
-=====================
+----------------------
 
 .. code-block:: bash
 
@@ -76,6 +79,10 @@ Rust下载安装
   rustup show	# 已安装的 Rust 版本
   rustup check	# rustup 检查更新
   rustup update	# 更新到最新稳定版
+  rustup target list --installed # 查看已安装的目标平台
+  rustup target add <target> # 添加目标平台
+  rustup target remove <target> # 移除目标平台
+  rustup component list --installed # 查看已安装的组件
 
   rustup doc std::fmt
 
@@ -84,6 +91,46 @@ Rust下载安装
   rustup install stable # 安装最新稳定版 stable/nightly/beta
 
 在 shell 中，运行 ``rustup doc std::fmt`` 会在浏览器中打开本地 std::fmt 文档
+
+跨平台编译
+-------------------------
+
+主要优势：
+
+- 无需依赖虚拟机
+- 静态链接
+- LLVM 支持
+- 标准库的跨平台支持
+
+``rustc -vV`` 输出 Rust 编译器的详细版本信息，包括 rustc 的版本、日期、主机架构和编译器类型等。
+
+.. code-block:: console
+
+  $ rustc -vV
+  rustc 1.84.1 (e71f9a9a9 2025-01-27)
+  binary: rustc
+  commit-hash: e71f9a9a98b0faf423844bf0ba7438f29dc27d58
+  commit-date: 2025-01-27
+  host: x86_64-apple-darwin
+  release: 1.84.1
+  LLVM version: 19.1.5
+
+运行 ``rustc --print target-list`` 将打印出Rust支持的所有目标平台。构建的平台的「目标三元组」（target triple）。Rust使用与LLVM[1]相同的格式。格式为<arch><sub>-<vendor>-<sys>-<env>。
+例如：
+
+- ``x86_64-unknown-linux-gnu`` 代表一个64位Linux机器
+- ``x86_64-pc-windows-gnu`` 代表一个64位的Windows机器
+
+常见的目标三元组
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.. csv-table:: Rust 目标三元组
+   :file: ./code/r01_下载安装/rust_targets.csv
+   :header-rows: 1
+   :encoding: utf-8
+
+
+
 
 工具链
 =====================

@@ -6,7 +6,7 @@ cargo 是 Rust 的包管理工具和构建系统。它可以帮助你管理 Rust
 
 .. csv-table:: cargo 常用命令
   :widths: 50, 70 
-  :file: ./code/r01_下载安装/cargo_commands.csv
+  :file: ./code/r02_cargo_usage/cargo_commands.csv
   :encoding: utf-8
   :align: left
 

@@ -1,0 +1,10 @@
+target_triplet,description
+x86_64-unknown-linux-gnu,64位Linux（内核3.2+，glibc 2.17+）
+x86_64-pc-windows-gnu,64位MinGW（Windows 7+）
+x86_64-pc-windows-msvc,64位MSVC（Windows 7+）
+x86_64-apple-darwin,64位macOS（10.7+，Lion+）
+aarch64-unknown-linux-gnu,ARM64 Linux（内核4.1，glibc 2.17+）
+aarch64-apple-darwin,ARM64 macOS（11.0+，Big Sur+）
+aarch64-apple-ios,ARM64 iOS
+aarch64-apple-ios-sim,ARM64上的Apple iOS模拟器
+armv7-linux-androideabi,ARMv7a Android
