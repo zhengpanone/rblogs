@@ -1,0 +1,24 @@
+命令,描述
+cargo init,可以为最新版本创建一个新项目
+cargo build,编译项目及其依赖--release
+cargo check,快速检查代码以确保它可以编译，但不生成可执行文件，快速编译检查
+cargo test,运行项目的测试
+cargo doc --open,在本地生成代码和依赖项的文档
+cargo run,如果生成了二进制文件 (main.rs)，
+cargo run --bin b,运行项目中指定的二进制目标
+cargo run -p w,该命令用于在 Rust 的 Cargo 工作空间中运行指定的包
+cargo … --timings,展示是什么包导致你的构建花费了这么长时间。
+cargo tree,显示依赖图
+cargo +{nightly stable} …,cargo +nightly：使用 nightly 工具链执行后续的 Cargo 命令；cargo +stable：使用 stable 工具链执行后续的 Cargo 命令
+rustc -- -Zunpretty=expanded,显示展开的宏
+rustup doc,打开离线 Rust 文档（包括书籍）
+cargo add,向项目添加新的依赖
+cargo publish,将包发布到 crates.io
+cargo update,更新 Cargo.lock 文件中的依赖项到最新兼容版本
+cargo rm,从项目中移除依赖（也需 cargo-edit）
+cargo new,创建一个新的 Rust 项目
+cargo watch,插件，cargo watch 监视你的项目源文件，并在源文件更改时运行 Cargo命令
+cargo edit,允许您直接从命令行添加、升级和删除依赖项，而无需手动编辑 Cargo.toml 文件
+cargo modules,cargo-modules 是一个用于可视化 Rust 项目模块结构的 Cargo 插件
+cargo make,高级构建工具和任务运行器，提供了一个扩展的任务定义格式，允许定义更复杂的构建流程和任务（大型项目尤其有用）
+cargo Tarpaulin,用于 Rust 项目的代码覆盖率报告工具，让你了解项目测试的覆盖范围，对于维护高质量的代码库非常重要

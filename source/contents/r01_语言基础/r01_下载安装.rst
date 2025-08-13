@@ -112,6 +112,39 @@ cargo-watch
   # 它可以帮助开发者在代码更改时自动运行测试、编译或执行其他命令，从而提高开发效率。
   cargo install cargo-watch
 
+  cargo watch -x 'run' # 运行并监视代码改变
+  cargo watch -x 'test' # 运行并监视测试改变
+
+参数
+>>>>>>>>
+
+- -c 清空终端
+
+- -q 抑制 cargo watch 本身的输出
+
+- -w 关注某个目录
+
+- -x 运行 cargo 命令
+
+.. code-block:: bash
+  
+  # 监视 src 目录下的代码更改，并在更改时运行 Cargo 命令
+  # -c: 清空终端输出
+  # -q: 抑制 cargo watch 本身的输出
+  # -w: 关注 src 目录
+  # -x: 执行 run 命令
+  cargo watch -c -q -w ./src -x 'run'
+
+rust-fmt
+---------------------
+
+.. code-block:: bash
+
+  # 安装 rust-fmt
+  cargo install rust-fmt
+
+  cargo fmt
+
 编辑技巧
 =====================
 
