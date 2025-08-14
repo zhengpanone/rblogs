@@ -1,3 +1,7 @@
 {
-  "words": ["toctree"]
+  "words": [
+    "noinstall",
+    "rustwasm",
+    "toctree"
+  ]
 }
