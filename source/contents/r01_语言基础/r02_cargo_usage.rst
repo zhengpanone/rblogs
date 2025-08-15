@@ -18,13 +18,23 @@ cargo 上手使用
   cargo new 02_hello_cargo --name hello_cargo
   cargo new hello_world --bin
   # 可以使用其他的VCS或不使用VCS：cargo new 的时候使用 --vcs这个 flag
-  cargo new --vcs=git projectName
+  cargo new --vcs=git project_name
+  cargo new my_project --vcs none
 
+参数说明
+
+- --vcs none：不创建任何版本控制文件夹
+- 其他可选值：
+
+  - git（默认）
+  - hg（Mercurial）
+  - pijul
+  - fossil
 
 切换到新的并行编译器前端
 ----------------------------
 
-你可以在 Nightly 版本中，启用新的并行编译器前端。使用 -Z threads=8 选项运行 Nightly 编译器：
+你可以在 ``Nightly`` 版本中，启用新的并行编译器前端。使用 ``-Z threads=8`` 选项运行 ``Nightly`` 编译器：
 
 .. code-block:: shell
   
