@@ -71,11 +71,28 @@ wasm-bindgen简介
      - JS 对象
      - 复杂数据结构交互（如配置项）
 
-核心功能与基础用法
-========================
+Rust 与 JavaScript 交互示例
+================================
 
-环境准备
------------------------------------
+Node.js环境
+-------------------------------
+
+.. create_wasm-bindgen_node_project:
+
+创建Rust项目
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+  
+  # 创建一个新的 Rust 库项目
+  cargo new hello_wasm_bindgen_node --lib --vcs none
+
+  # 进入项目目录
+  cd hello_wasm_bindgen_node
+  
+  # 添加 wasm-bindgen、web-sys 依赖
+  cargo add wasm-bindgen web-sys
+
 
 .. code-block:: toml
   :caption: Cargo.toml
@@ -84,67 +101,321 @@ wasm-bindgen简介
   wasm-bindgen = "0.2"# 核心库
   web-sys = "0.3"# 浏览器 API 绑定（可选，需调用 JS 原生接口时使用）
 
+编辑Cargo.toml
+>>>>>>>>>>>>>>>>>
 
-从 Rust 到 JavaScript：导出函数供 JS 调用
-------------------------------------------------
+添加 ``[lib]`` 段
+
+- ``crate-type = ["cdylib"]``:指定编译为动态库（供 WASM 使用）;
+  
+- ``crate-type = ["rlib"]``: 仍然能作为普通 Rust 库依赖（方便单元测试或共享逻辑）。
+
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"] # 编译为动态库，供 WASM 使用
+
+编辑lib.rs
+>>>>>>>>>>>>>>>>>
 
 .. code-block:: rust
   :caption: src/lib.rs
 
   use wasm_bindgen::prelude::*;
 
-  // 导出函数到 JS，支持基本类型参数和返回值
+  // 使用#[wasm_bindgen]宏将函数导出为JavaScript可调用的接口
   #[wasm_bindgen]
-  pub fn add(a: i32, b: i32) -> i32 {
-    a + b
+  pub fn greet(name: &str) -> String {
+      format!(
+          "Hello, {}! Welcome to the world of Rust and WebAssembly.",
+          name
+      )
   }
 
-  // 导出结构体及方法
-  pub struct MathUtils{
-    base: i32,
+  #[wasm_bindgen]
+  pub fn add(a: i32, b: i32) -> i32 {
+      a + b
+  }
+
+  #[wasm_bindgen]
+  pub struct MathUtils {
+      value: i32,
   }
 
   #[wasm_bindgen]
   impl MathUtils {
-    // 构造函数
-    #[wasm_bindgen(constructor)]
-    pub fn new(base: i32) -> MathUtils {
-        MathUtils { base }
-    }
+      #[wasm_bindgen(constructor)]
+      pub fn new(value: i32) -> Self {
+          MathUtils { value }
+      }
 
-    // 导出方法到 JS
-    pub fn multiply(&self, factor: i32) -> i32 {
-        self.base * factor
-    }
+      pub fn multiply(&self, other: i32) -> i32 {
+          self.value * other
+      }
   }
 
-编译rust代码
+  #[cfg(test)]
+  mod tests {
+      use super::*;
+      use wasm_bindgen_test::*;
+
+      #[wasm_bindgen_test]
+      fn test_greet() {
+          let result = greet("Alice");
+          assert_eq!(
+              result,
+              "Hello, Alice! Welcome to the world of Rust and WebAssembly."
+          );
+      }
+
+      #[wasm_bindgen_test]
+      fn test_add() {
+          assert_eq!(add(2, 3), 5);
+      }
+
+      #[wasm_bindgen_test]
+      fn test_math_utils_multiply() {
+          let math = MathUtils::new(10);
+          assert_eq!(math.multiply(5), 50);
+      }
+  }
+
+测试
+>>>>>>>>>>>>>>>>>
 
 .. code-block:: shell
 
+  # 安装 wasm-pack
+  cargo install wasm-pack
+  # 运行测试
+  wasm-pack test --headless --chrome
+
+  # 编译为 WASM
   wasm-pack build --target web
 
-JS 调用 Rust 函数：调用 Rust 函数
-----------------------------------
 
-.. code-block:: javascript
+使用
+>>>>>>>>>>>>>>>>>
+
+编辑package.json
+
+.. code-block:: json
+  :caption: package.json
+
+  {
+    "name": "hello_wasm_bindgen_node",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+      "start": "node index.js"
+    }
+  }
+
+
+编辑index.js
+
+.. code-block:: js
   :caption: index.js
 
-  import init, { add, MathUtils } from './pkg/hello_wasm-bindgen.js';
+  // Node.js 版本 wasm-bindgen 直接导出函数和类，不需要 init()
+  import { add, MathUtils } from './pkg/hello_wasm_bindgen_node.js';
 
-  async function run() {
-    // 初始化 WASM 模块
-    await init();
-
-    // 调用导出的 Rust 函数
+  function run() {
     console.log(add(2, 3)); // 输出：5
 
-    // 使用导出的结构体
     const mathUtils = new MathUtils(10);
     console.log(mathUtils.multiply(5)); // 输出：50
   }
 
   run();
+
+.. run_wasm-bindgen_node_project_index_js:
+
+运行项目
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+
+  node index.js
+
+
+
+Web环境
+-------------------------------
+
+.. create_wasm-bindgen_web_project:
+
+创建Rust项目
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+  
+  # 创建一个新的 Rust 库项目
+  cargo new hello_wasm_bindgen_web --lib --vcs none
+
+  # 进入项目目录
+  cd hello_wasm_bindgen_web
+  
+  # 添加 wasm-bindgen、web-sys 依赖
+  cargo add wasm-bindgen web-sys
+
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [dependencies]
+  wasm-bindgen = "0.2"# 核心库
+  web-sys = "0.3"# 浏览器 API 绑定（可选，需调用 JS 原生接口时使用）
+
+.. edit_wasm-bindgen_web_cargo_toml_project:
+
+编辑Cargo.toml
+>>>>>>>>>>>>>>>>>
+
+添加 ``[lib]`` 段
+
+- ``crate-type = ["cdylib"]``:指定编译为动态库（供 WASM 使用）;
+  
+- ``crate-type = ["rlib"]``: 仍然能作为普通 Rust 库依赖（方便单元测试或共享逻辑）。
+
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"] # 编译为动态库，供 WASM 使用
+
+.. edit_wasm-bindgen_web_project_lib_rs:
+
+编辑lib.rs
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: rust
+  :caption: src/lib.rs
+
+  use wasm_bindgen::prelude::*;
+
+  // 使用#[wasm_bindgen]宏将函数导出为JavaScript可调用的接口
+  #[wasm_bindgen]
+  pub fn greet(name: &str) -> String {
+      format!(
+          "Hello, {}! Welcome to the world of Rust and WebAssembly.",
+          name
+      )
+  }
+
+  #[wasm_bindgen]
+  pub fn add(a: i32, b: i32) -> i32 {
+      a + b
+  }
+
+  #[wasm_bindgen]
+  pub struct MathUtils {
+      value: i32,
+  }
+
+  #[wasm_bindgen]
+  impl MathUtils {
+      #[wasm_bindgen(constructor)]
+      pub fn new(value: i32) -> Self {
+          MathUtils { value }
+      }
+
+      pub fn multiply(&self, other: i32) -> i32 {
+          self.value * other
+      }
+  }
+
+  #[cfg(test)]
+  mod tests {
+      use super::*;
+      use wasm_bindgen_test::*;
+      wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+
+      #[wasm_bindgen_test]
+      fn test_greet() {
+          let result = greet("Alice");
+          assert_eq!(
+              result,
+              "Hello, Alice! Welcome to the world of Rust and WebAssembly."
+          );
+      }
+
+      #[wasm_bindgen_test]
+      fn test_add() {
+          assert_eq!(add(2, 3), 5);
+      }
+
+      #[wasm_bindgen_test]
+      fn test_math_utils_multiply() {
+          let math = MathUtils::new(10);
+          assert_eq!(math.multiply(5), 50);
+      }
+  }
+
+.. test_wasm-bindgen_web_project:
+
+测试
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+
+  # 安装 wasm-pack
+  cargo install wasm-pack
+  # 运行测试
+  wasm-pack test --headless --chrome
+
+  # 编译为 WASM
+  wasm-pack build --target web
+
+
+.. use_wasm-bindgen_web_project_wasm:
+
+使用
+>>>>>>>>>>>>>>>>>
+
+编辑index.html
+
+.. code-block:: html
+  :caption: index.html
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rust + WASM Demo</title>
+  </head>
+  <body>
+    <script type="module">
+      import init, { add, MathUtils, greet } from "./pkg/hello_wasm_bindgen_web.js";
+
+
+      async function run() {
+        await init(); // 必须初始化 wasm
+
+        console.log(add(2, 3)); // 5
+        // 调用Rust导出的greet函数，并传入参数"WebAssembly"
+        const message = greet("WebAssembly");
+        console.log(message); // Hello, WebAssembly! Welcome to the world of Rust and WebAssembly.
+
+        // 也可以将问候语显示在页面上，例如创建一个段落元素并添加到页面中
+        const p = document.createElement("p");
+        p.textContent = message;
+        document.body.appendChild(p);
+        const math = new MathUtils(10);
+        console.log(math.multiply(5)); // 50
+      }
+
+      run();
+    </script>
+  </body>
+  </html>
+
+
+JavaScript与Rust交互示例 
+================================
 
 从 JavaScript 到 Rust：调用 JS 函数
 ------------------------------------------------
