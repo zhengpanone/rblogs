@@ -311,7 +311,7 @@ wasm-pack 开发指南
 
 
 
-.. WebAssembly-pack_Reference:
+.. _WebAssembly-pack_Reference:
 
 参考文档
 ================

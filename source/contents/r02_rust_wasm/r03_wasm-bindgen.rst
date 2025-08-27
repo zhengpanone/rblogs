@@ -77,7 +77,7 @@ Rust 与 JavaScript 交互示例
 Node.js环境
 -------------------------------
 
-.. create_wasm-bindgen_node_project:
+.. _create_wasm_bindgen_node_project:
 
 创建Rust项目
 >>>>>>>>>>>>>>>>>
@@ -101,6 +101,8 @@ Node.js环境
   wasm-bindgen = "0.2"# 核心库
   web-sys = "0.3"# 浏览器 API 绑定（可选，需调用 JS 原生接口时使用）
 
+.. _edit_wasm_bindgen_node_cargo_toml_project:
+
 编辑Cargo.toml
 >>>>>>>>>>>>>>>>>
 
@@ -116,6 +118,8 @@ Node.js环境
 
   [lib]
   crate-type = ["cdylib", "rlib"] # 编译为动态库，供 WASM 使用
+
+.. _edit_wasm_bindgen_node_project_lib_rs:
 
 编辑lib.rs
 >>>>>>>>>>>>>>>>>
@@ -190,10 +194,10 @@ Node.js环境
   # 安装 wasm-pack
   cargo install wasm-pack
   # 运行测试
-  wasm-pack test --headless --chrome
+  wasm-pack test --node
 
   # 编译为 WASM
-  wasm-pack build --target web
+  wasm-pack build --target nodejs
 
 
 使用
@@ -241,11 +245,10 @@ Node.js环境
   node index.js
 
 
-
 Web环境
 -------------------------------
 
-.. create_wasm-bindgen_web_project:
+.. _create_wasm_bindgen_web_project:
 
 创建Rust项目
 >>>>>>>>>>>>>>>>>
@@ -269,7 +272,7 @@ Web环境
   wasm-bindgen = "0.2"# 核心库
   web-sys = "0.3"# 浏览器 API 绑定（可选，需调用 JS 原生接口时使用）
 
-.. edit_wasm-bindgen_web_cargo_toml_project:
+.. _edit_wasm_bindgen_web_cargo_toml_project:
 
 编辑Cargo.toml
 >>>>>>>>>>>>>>>>>
@@ -287,7 +290,7 @@ Web环境
   [lib]
   crate-type = ["cdylib", "rlib"] # 编译为动态库，供 WASM 使用
 
-.. edit_wasm-bindgen_web_project_lib_rs:
+.. _edit_wasm_bindgen_web_project_lib_rs:
 
 编辑lib.rs
 >>>>>>>>>>>>>>>>>
@@ -355,7 +358,7 @@ Web环境
       }
   }
 
-.. test_wasm-bindgen_web_project:
+.. _test_wasm_bindgen_web_project:
 
 测试
 >>>>>>>>>>>>>>>>>
@@ -371,7 +374,7 @@ Web环境
   wasm-pack build --target web
 
 
-.. use_wasm-bindgen_web_project_wasm:
+.. _use_wasm-bindgen_web_project_wasm:
 
 使用
 >>>>>>>>>>>>>>>>>
@@ -422,6 +425,41 @@ JavaScript与Rust交互示例
 
 在 Rust 中调用 JS 的 console.log
 
+
+创建Rust项目
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+  
+  # 创建一个新的 Rust 库项目
+  cargo new rust_call_js --lib --vcs none
+
+  # 进入项目目录
+  cd rust_call_js
+  
+  # 添加 wasm-bindgen、web-sys 依赖
+  cargo add wasm-bindgen web-sys
+  cargo add --dev wasm-bindgen-test
+
+编辑Cargo.toml
+>>>>>>>>>>>>>>>>>
+
+添加 ``[lib]`` 段
+
+- ``crate-type = ["cdylib"]``:指定编译为动态库（供 WASM 使用）;
+  
+- ``crate-type = ["rlib"]``: 仍然能作为普通 Rust 库依赖（方便单元测试或共享逻辑）。
+
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"] # 编译为动态库，供 WASM 使用
+
+编辑lib.rs
+>>>>>>>>>>>>>>>>>
+
 .. code-block:: rust
   :caption: src/lib.rs
 
@@ -440,6 +478,26 @@ JavaScript与Rust交互示例
   pub fn greet(name: &str) {
     log(&format!("Hello, {}!", name)); // 在浏览器控制台输出
   }
+
+  #[cfg(test)]
+  mod tests {
+    use super::*;
+    use wasm_bindgen_test::*;
+    #[wasm_bindgen_test]
+    fn test_greet(){
+        greet("World");
+
+    }
+  }
+  
+测试
+>>>>>>>>>>>>>>>>>
+
+.. code-block:: shell
+  
+  # 运行测试
+  wasm-pack test --node
+  wasm-pack test --headless --chrome
 
 动态导入JS模块
 ---------------------------------
@@ -528,13 +586,7 @@ JavaScript代码，导出一个函数和一个类。
 
 
 
-
-
-
-
-
-
-.. wasm-bindgen_Reference:
+.. _wasm-bindgen_Reference:
 
 参考文档
 ================

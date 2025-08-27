@@ -20,7 +20,7 @@ wasm-bindgen 为 Rust 结构体提供了无缝的 JavaScript 类生成能力。
 
 
 
-.. wasm-bindgen_advince_Reference:
+.. _wasm-bindgen_advance_Reference:
 
 参考文档
 ================

@@ -39,8 +39,7 @@ extensions = ['recommonmark',
               #   'sphinx_simplepdf'
               ]
 
-# 给每个 label 加文件路径前缀，避免重复
-autosectionlabel_prefix_document = True
+
 
 
 # LaTeX配置
@@ -118,3 +117,6 @@ sys.path.append(os.path.abspath(_exts))
 
 copybutton_prompt_text = "$ "
 copybutton_prompt_is_regexp = False
+# 给每个 label 加文件路径前缀，避免重复
+autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 1

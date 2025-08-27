@@ -238,7 +238,7 @@ wasm-pack
 这样，我们就成功地在浏览器中运行了一个用 Rust 编写的 “Hello, World!” 程序，
 
 
-.. WebAssembly_Reference:
+.. _WebAssembly_Reference:
 
 参考文档
 ================
