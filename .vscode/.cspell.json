@@ -1,7 +1,11 @@
 {
   "words": [
-    "noinstall",
+    "androideabi",
+    "armv",
+    "msvc",
+    "msvcrt",
     "rustwasm",
+    "tlsv",
     "toctree"
   ]
 }
