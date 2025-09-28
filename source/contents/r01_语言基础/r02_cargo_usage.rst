@@ -5,13 +5,45 @@ cargo使用
 cargo 是 Rust 的包管理工具和构建系统。它可以帮助你管理 Rust 项目的依赖、编译代码、运行测试等。与 Cargo 一起 还有 crates.io_，它为社区提供包注册服务，用户可以将自己的包发布到 crates.io_。
 
 .. csv-table:: cargo 常用命令
-  :widths: 50, 70 
+  :widths: 40, 70 
   :file: ./code/r02_cargo_usage/cargo_commands.csv
   :encoding: utf-8
   :align: left
 
 cargo 上手使用
 ===========================
+
+配置cargo
+----------------------------
+
+cargo 的配置文件位于 ``$CARGO_HOME/config.toml``，如果没有该文件，可以手动创建。 ``$CARGO_HOME`` 目录默认位于用户的 home 目录下的 ``.cargo`` 文件夹内。你可以通过设置环境变量 ``CARGO_HOME`` 来更改这个目录的位置。
+
+
+
+.. code-block:: toml
+
+  [source.crates-io]
+  replace-with = 'ustc' # 使用 ustc 镜像替换 crates.io 源
+
+  [source.ustc]
+  registry = "https://mirrors.ustc.edu.cn/crates.io-index/" # ustc 镜像源
+  
+  [source.github]
+  registry = "https://github.com/rust-lang/crates.io-index" # github 镜像源
+  
+  [build]
+  target = "x86_64-unknown-linux-gnu" # 设置默认编译目标
+  rustflags = ["-C", "target-cpu=native"] # 优化编译选项，针对本地 CPU 进行优化
+  # target-cpu 可以设置为 native, x86-64, core2, corei7, skylake 等
+  # 具体选项可以参考 https://doc.rust-lang.org/rustc/codegen-options/index.html#target-cpu
+  target-dir = "target" # 设置构建输出目录
+  # /Users/mac/.target
+  # 设置构建输出目录，默认是 target，可以根据需要进行调整
+  
+
+
+创建新项目
+----------------------------
 
 .. code-block:: bash
 

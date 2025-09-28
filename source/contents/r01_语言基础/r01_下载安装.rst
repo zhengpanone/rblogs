@@ -224,10 +224,12 @@ cargo generate 是一个用于从模板生成新的 Rust 项目的工具。它�
   cargo install cargo-generate
 
   # 使用模板生成新项目
-  # tyr-rust-bootcamp/template 是一个 Rust 项目的模板仓库，包含了项目的基本结构和配置。
   # <template-repo-url> 是模板仓库的 URL
   # <project-name> 是你想要创建的新项目的名称。
   cargo generate --git <template-repo-url> --name <project-name>
+
+  # tyr-rust-bootcamp/template 是一个 Rust 项目的模板仓库，包含了项目的基本结构和配置。
+  cargo generate tyr-rust-bootcamp/template
 
 Cargo deny
 ---------------------
@@ -253,7 +255,7 @@ typos 是一个用于检查 Rust 代码中拼写错误的工具。它可以帮�
 .. code-block:: bash
 
   # 安装 typos
-  cargo install typos
+  cargo install typos-cli
 
   # 检查代码中的拼写错误
   typos check
