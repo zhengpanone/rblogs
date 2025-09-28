@@ -8,7 +8,7 @@ Rust 生态系统由许多工具组成，主要包括：
 
 - ``rustc``：Rust 编译器，可将 .rs 文件转换为二进制文件和其他中间格式。
 
-- ``cargo``：Rust 依赖项管理器和构建工具。Cargo 知道如何下载托管在 https://crates.io 上的依赖项,并在构建项目时将它们传递给 ``rustc``。Cargo 还附带一个内置的测试运行程序，用于执行单元测试。
+- ``cargo``：Rust 依赖项管理器和构建工具。Cargo 知道如何下载托管在 `crates.io`_ 上的依赖项,并在构建项目时将它们传递给 ``rustc``。Cargo 还附带一个内置的测试运行程序，用于执行单元测试。
 
 - ``rustup``：Rust 工具链安装和更新工具。当 Rust 发布新版本时，此工具用于安装并更新 ``rustc`` 和 ``cargo``。 此外， ``rustup`` 还可以下载标准库的文档。可以同时安装多个版本的 Rust， ``rustup`` 会根据需要让你在这些版本之间切换。
 
@@ -17,7 +17,11 @@ Rust 生态系统由许多工具组成，主要包括：
 
 Rust 有一个快速发布时间表，每六周就会发布一次新版本。新版本保持与旧版本的向后兼容性，并添加新功能。
 
-共有三个发布阶段：“稳定版（stable）”、“测试版（beta）”和“夜间版（nightly）”。
+共有三个发布阶段：
+
+- 稳定版（stable）
+- 测试版（beta）
+- 夜间版（nightly）
 
 新功能会先在“夜间版”上测试，“测试版”会每六周转为“稳定版”。
 
@@ -149,8 +153,6 @@ rustup
    :header-rows: 1
    :encoding: utf-8
 
-
-
 工具链
 =====================
 
@@ -211,6 +213,82 @@ rust-fmt
 
   cargo fmt
 
+cargo generate
+---------------------
+
+cargo generate 是一个用于从模板生成新的 Rust 项目的工具。它允许开发者快速创建符合特定结构和配置的新项目，节省了手动设置项目的时间和精力,如 `tyr-rust-bootcamp/template`_ 。
+
+.. code-block:: bash
+
+  # 安装 cargo-generate
+  cargo install cargo-generate
+
+  # 使用模板生成新项目
+  # tyr-rust-bootcamp/template 是一个 Rust 项目的模板仓库，包含了项目的基本结构和配置。
+  # <template-repo-url> 是模板仓库的 URL
+  # <project-name> 是你想要创建的新项目的名称。
+  cargo generate --git <template-repo-url> --name <project-name>
+
+Cargo deny
+---------------------
+
+Cargo deny 是一个 Cargo 插件，可以用于检查依赖的安全性
+
+.. code-block:: bash
+
+  # 安装 cargo-deny
+  cargo install cargo-deny
+
+  # 初始化 cargo-deny 配置文件
+  cargo deny init
+
+  # 检查依赖的安全性
+  cargo deny check
+
+typos
+---------------------
+
+typos 是一个用于检查 Rust 代码中拼写错误的工具。它可以帮助开发者发现和纠正代码中的拼写错误，从而提高代码的质量和可读性。
+
+.. code-block:: bash
+
+  # 安装 typos
+  cargo install typos
+
+  # 检查代码中的拼写错误
+  typos check
+
+
+git cliff
+---------------------
+
+git-cliff 是一个用于生成项目变更日志（changelog）的工具。它可以根据 Git 提交记录自动生成格式化的变更日志，帮助开发者更好地管理和记录项目的变化。
+
+.. code-block:: bash
+
+  # 安装 git-cliff
+  cargo install git-cliff
+
+  # 初始化 git-cliff 配置文件
+  git cliff init
+
+  # 生成变更日志
+  git cliff -o CHANGELOG.md
+
+cargo nextest
+---------------------
+
+cargo-nextest 是一个用于运行 Rust 测试的工具。它可以帮助开发者更高效地运行和管理测试，提高测试的速度和可靠性。
+
+.. code-block:: bash
+
+  # 安装 cargo-nextest
+  cargo install cargo-nextest
+
+  # 运行测试
+  cargo nextest run
+
+
 编辑技巧
 =====================
 
@@ -228,8 +306,29 @@ rust-fmt
   // 该属性用于隐藏未使用的枚举警告。
   #![allow(unused_enums)]
 
+VSCode 插件
+=====================
 
+- crates:Rust 包管理
+- Even Better TOML:TOML 文件支持
+- BetterComments:优化注释显示
+- Error Lens:错误提示优化
+- GitLens:Git 增强
+- Github Copilot:代码提示
+- indent-rainbow:缩进显示优化
+- Prettier -Code formatter:代码格式化
+- REST cLient:REST API 调试
+- rust-analyzer:Rust 语言支持
+- Rust Test lens:Rust 测试支持
+- Rust Test Explorer:Rust 测试概览
+- T0D0 Highlight:TODO 高亮
+- vscode-icons:图标优化
+- YAML:YAML 文件支持
 
 
 .. |image1| image:: ./image/r01_下载安装/image1.png
+  
 .. |image2| image:: ./image/r01_下载安装/image2.png
+
+..  _crates.io: https://crates.io/
+..  _tyr-rust-bootcamp/template: https://github.com/tyr-rust-bootcamp/template

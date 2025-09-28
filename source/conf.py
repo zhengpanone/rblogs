@@ -1,9 +1,13 @@
 import os
 import sys
 import sphinx_rtd_theme
+import platform
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+
+_exts = "./exts"
+sys.path.append(os.path.abspath(_exts))
 
 
 # -- Project information -----------------------------------------------------
@@ -28,27 +32,44 @@ simplepdf_vars = {
     'links': '#FF3333',
 }
 
-extensions = ['recommonmark',
-              'sphinx_copybutton',
-              'sphinx_markdown_tables',
-              'sphinxcontrib.inkscapeconverter',
-              'sphinx.ext.autodoc',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode',
-              'sphinx.ext.autosectionlabel',
-              #   'sphinx_simplepdf'
-              ]
+extensions = [
+            'sphinx_copybutton',
+            'sphinx_markdown_tables',
+            'sphinxcontrib.inkscapeconverter',
+            'sphinx.ext.autodoc',
+            'sphinx.ext.napoleon',
+            'sphinx.ext.viewcode',
+            'sphinx.ext.autosectionlabel',
+            #   'sphinx_simplepdf',
+            'chinese_search', 
+            'myst_parser', 
+            'sphinx.ext.todo',
+            ]
 
-
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = True
 
 
 # LaTeX配置
 latex_engine = 'xelatex'  # 或者 'pdflatex'，根据你的需求选择
+
+# 根据操作系统选择字体
+if platform.system() == 'Windows':
+    cjk_font = 'SimSun'
+elif platform.system() == 'Darwin':  # macOS
+    cjk_font = 'Songti SC'
+else:  # Linux
+    cjk_font = 'Noto Sans CJK SC'
+    
 latex_elements = {
     'papersize': 'a4paper',
-    'pointsize': '10pt',
-    'preamble': '',
+    'pointsize': '16pt',
     'figure_align': 'htbp',
+    'preamble': r'''
+    \usepackage{xeCJK}
+    \setCJKmainfont{''' + cjk_font + r'''}
+    '''
+    
 }
 
 # Add any paths that contain templates here, relative to this directory.
@@ -93,7 +114,7 @@ latex_documents = [
 ]
 
 man_pages = [
-    ('index', 'pansblog', 'Pan\'s Blog Documentation',
+    ('index', 'pan blog', 'Pan\'s Blog',
      [u'郑攀'], 1)
 ]
 
@@ -112,11 +133,21 @@ if not on_rtd:
 
 highlight_language = "go,javascript,html"
 
-_exts = "./exts"
-sys.path.append(os.path.abspath(_exts))
+
 
 copybutton_prompt_text = "$ "
 copybutton_prompt_is_regexp = False
 # 给每个 label 加文件路径前缀，避免重复
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 1
+
+
+numfig = True
+numfig_secnum_depth = 2
+
+numfig_format = {
+    'figure': '图 %s',
+    'table': '表 %s',
+    'code-block': '代码 %s',
+    'section': '节 %s',
+}

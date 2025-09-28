@@ -2,8 +2,10 @@
   "words": [
     "androideabi",
     "armv",
+    "bootcamp",
     "msvc",
     "msvcrt",
+    "nextest",
     "rustwasm",
     "tlsv",
     "toctree"
