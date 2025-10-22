@@ -6,9 +6,12 @@
     "msvc",
     "msvcrt",
     "nextest",
+    "println",
+    "rlib",
     "rustwasm",
     "structopt",
     "tlsv",
-    "toctree"
+    "toctree",
+    "Vite"
   ]
 }
