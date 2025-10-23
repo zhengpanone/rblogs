@@ -12,6 +12,7 @@
     "structopt",
     "tlsv",
     "toctree",
-    "Vite"
+    "Vite",
+    "webassembly"
   ]
 }

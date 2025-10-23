@@ -353,6 +353,202 @@ demos/web/index.html
 Rust 接收 JavaScript 对象
 ========================================
 
+灵活但类型不安全的JsValue方案
+---------------------------------------
+
+``JsValue`` 是一个万能类型，可以表示任何 JavaScript 值（对象、数组、字符串、数字等）。当不知道或不关心 JS 对象的具体结构时，它非常有用。
+
+.. code-block:: rust
+  :caption: src/lib.rs
+
+  use js_sys::Reflect;
+  use wasm_bindgen::prelude::*;
+
+  #[wasm_bindgen]
+  extern "C" {
+      // 导入 JS 的 console.log
+      #[wasm_bindgen(js_namespace = console)]
+      fn log(s: &str);
+  }
+
+  #[wasm_bindgen]
+  pub fn process_js_object(obj: &JsValue) -> Result<(), JsValue> {
+      // 你可以使用 serde_wasm_bindgen 将其反序列化为 Rust 结构体
+      log(&format!("Received JS value: {:?}", obj));
+      let name_v = Reflect::get(obj, &JsValue::from_str("name"))?;
+      if let Some(name) = name_v.as_string() {
+          log(&format!("name = {}", name));
+      }
+
+      // age
+      let age_v = Reflect::get(obj, &JsValue::from_str("age"))?;
+      if let Some(age) = age_v.as_f64() {
+          log(&format!("age = {}", age));
+      }
+
+      Ok(())
+  }
+
+注意:
+
+- 需要安装 ``js-sys``, ``cargo add js-sys``
+
+- ``Reflect::get(&JsValue, &JsValue)`` 返回 ``Result<JsValue, JsValue>``，所以函数签名用 -> ``Result<(), JsValue>``.
+
+- ``as_string()`` / ``as_f64()`` 是 ``JsValue`` 自带的方法，用于做“JS → Rust”基础类型提取。
+
+.. code-block:: js
+  :caption: demos/node/index.mjs
+
+  import { process_js_object } from './pkg/wasm_bindgen_advance.js'
+
+  async function run() {
+      const js_object = {
+          id: 101,
+          data: 'some payload',
+          nested: { a: 1 },
+          name: 'Tom',
+          age: 20,
+      };
+
+      process_js_object(js_object);
+
+      // 别忘了释放内存
+      user.free();
+  }
+  run();
+
+定义特定类型的安全方案
+--------------------------------
+
+如果 JS 对象的结构是固定的，我们可以使用 #[wasm_bindgen] 来定义一个类型，专门用来接收它。
+
+.. code-block:: rust
+  :caption: src/lib.rs
+
+  // lib.rs
+  use wasm_bindgen::prelude::*;
+
+  // 使用 `typescript_type` 来告诉 wasm-bindgen 对应的 TS 类型
+  #[wasm_bindgen(typescript_type = "MyJsObject")]
+  pub extern "C" {
+      // 定义一个类型来映射 JS 对象
+      #[wasm_bindgen(extends = js_sys::Object)]
+      #[derive(Debug, Clone)]
+      type MyJsObject;
+
+      // 定义 getter 方法来访问属性
+      #[wasm_bindgen(method, getter)]
+      fn id(this: &MyJsObject) -> u32;
+
+      #[wasm_bindgen(method, getter)]
+      fn data(this: &MyJsObject) -> String;
+  }
+
+  #[wasm_bindgen]
+  pub fn process_typed_object(obj: &MyJsObject) {
+      // 现在可以安全地访问属性了！
+      log(&format!("Received typed object with id: {} and data: '{}'", obj.id(), obj.data()));
+  }
+
+.. code-block:: js
+  :caption: demos/node/index.mjs
+
+  import { process_typed_object } from './pkg/wasm_bindgen_advance.js'
+
+  async function run() {
+    const myObject = {
+      id: 101,
+      data: 'some payload',
+    };
+
+    process_typed_object(myObject);
+    // 别忘了释放内存
+    user.free();
+  }
+  run();
+
+``serde`` + ``serde-wasm-bindgen``：终极解决方案
+--------------------------------------------------------
+
+``serde``（Rust 序列化标准库）+ ``serde-wasm-bindgen`` 可自动完成 Rust 结构体与 JS 对象的双向转换，兼顾灵活与安全。
+
+``serde`` 是 Rust 生态中用于序列化和反序列化的标准库。 ``serde-wasm-bindgen`` 则是连接 serde 和 ``wasm-bindgen`` 的桥梁，可以自动将 Rust 结构体和 ``JsValue`` 进行相互转换。
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [dependencies]
+  js-sys = "0.3.81"
+  serde = { version = "1.0.228", features = ["derive"] }
+  serde-wasm-bindgen = "0.6.5"
+  wasm-bindgen = "0.2.104"
+
+结构体加上 ``#[derive(Serialize, Deserialize)]``，然后将函数的参数和返回值类型从具体结构体改为 ``JsValue`` 即可。  
+
+.. code-block:: rust
+  :caption: src/lib.rs
+  
+  use wasm_bindgen::prelude::*;
+  use serde::{Serialize, Deserialize};
+
+
+  #[derive(Serialize, Deserialize)]
+  pub struct ComplexData {
+      id: u32,
+      name: String,
+      tags: Vec<String>,
+      active: bool,
+  }
+
+  // 接收 JS 对象，自动反序列化为 Rust 结构体
+  #[wasm_bindgen]
+  pub fn process_data_with_serde(val: JsValue) -> Result<JsValue, JsValue> {
+      // 1. JsValue -> Rust struct
+      let data: ComplexData = serde_wasm_bindgen::from_value(val)?;
+
+      println!("Processed in Rust: {:?}", data.name);
+
+      // 2. Rust struct -> JsValue
+      let processed_data = ComplexData {
+          id: data.id + 100,
+          ..data // 使用struct update 语法
+      };
+
+      Ok(serde_wasm_bindgen::to_value(&processed_data)?)
+  }
+
+.. code-block:: js
+  :caption: demos/node/index.mjs
+
+  import { process_data_with_serde } from './pkg/wasm_bindgen_advance.js'
+
+  async function run() {
+      const myData = {
+          id: 1,
+          name: 'Wasm-Bindgen',
+          tags: ['rust', 'webassembly', 'serde'],
+          active: true
+      };
+
+      try {
+          const result = process_data_with_serde(myData);
+          console.log('Result from Rust:', result);
+          // 输出: {id: 101, name: 'Wasm-Bindgen', tags: ['rust', 'webassembly', 'serde'], active: true}
+      } catch (error) {
+          console.error('Error from Rust:', error);
+      }
+
+      // 别忘了释放内存
+      user.free();
+  }
+  run();
+
+``serde-wasm-bindgen`` 几乎抹平了两种语言间数据结构的差异！
+
+
+
+
 
 
 
