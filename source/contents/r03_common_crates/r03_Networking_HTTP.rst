@@ -31,3 +31,16 @@ actix-web
 ==================
 
 高性能 Web 框架。
+
+
+axum
+==================
+
+基于 tower 的 Web 框架。
+
+创建一个简单的 Web 服务器
+-------------------------------
+
+.. literalinclude:: ./code/r03_Networking_HTTP/axum_demo/01.sample_http.rs
+  :caption: 01.sample_http.rs
+  :language: rust

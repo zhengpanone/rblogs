@@ -1,5 +1,4 @@
 {
-    "restructuredtext.confPath": "${workspaceFolder}\\source",
     "restructuredtext.linter.extraArgs": [
         "--ignore D000",
         "--ignore D001",
@@ -7,8 +6,6 @@
         "--ignore D004",
         "--ignore D005"
     ],
-    "restructuredtext.updateOnTextChanged": "true",
-    "restructuredtext.updateDelay": 1,
     "liveServer.settings.port": 5501,
     "cSpell.words": [
         "gblogs",

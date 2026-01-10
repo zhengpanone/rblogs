@@ -182,6 +182,10 @@ cargo-watch
 
   cargo watch -x 'run' # 运行并监视代码改变
   cargo watch -x 'test' # 运行并监视测试改变
+  cargo watch -q -c -w src/ -x 'run' # 运行并监视代码改变，不显示输出，清空终端
+  cargo watch -q -c -w tests/ -x 'test -q quick_dev -- --nocapture' # 运行并监视测试改变，不显示输出，清空终端
+  # --nocapture会立即显示所有输出，即使测试通过
+
 
 参数
 >>>>>>>>
@@ -202,6 +206,49 @@ cargo-watch
   # -w: 关注 src 目录
   # -x: 执行 run 命令
   cargo watch -c -q -w ./src -x 'run'
+
+- -q quiet 安静模式，减少输出信息; 只显示重要的信息，隐藏冗余的输出
+- -c clear 在每次重新运行前清除终端屏幕; 让输出更清晰，避免多个运行结果堆叠在一起
+- -w watch 监控指定目录的文件变化
+- -x execute 指定要执行的 cargo 命令; 这里是 cargo run 单引号内的命令会在文件变化时执行
+
+配置文件
+>>>>>>>>>>>>>>
+
+在项目根目录创建 .cargo-watch.toml配置文件
+
+.. code-block:: toml
+  :caption: .cargo-watch.toml
+
+  [default]
+  watch = ["Cargo.toml"]
+  ignore = [".git", "target"]
+  clear = true
+  quiet = true
+
+  # 使用不同的配置文件参数
+  [configs]
+  run = { include = ["src"] }
+  test = { include = ["tests", "src"] }
+
+  # 根据配置文件执行不同命令
+  [run-config.run]
+  when = { config = "run" }
+  command = ["run"]
+
+  [run-config.test]
+  when = { config = "run" }
+  command = ["test", "-q", "quick_dev", "--", "--nocapture"]
+
+使用方式
+
+.. code-block:: bash
+
+  # 运行服务器
+  cargo watch --config run
+
+  # 运行测试
+  cargo watch --config test
 
 rust-fmt
 ---------------------

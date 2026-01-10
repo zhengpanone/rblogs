@@ -546,6 +546,47 @@ Rust 接收 JavaScript 对象
 
 ``serde-wasm-bindgen`` 几乎抹平了两种语言间数据结构的差异！
 
+serde 与 wasm-bindgen的联动
+----------------------------
+
+serde序列化与反序列化
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+serde是一个极为强大的序列化和反序列化框架，它就像是一座桥梁，连接着 Rust 数据结构与各种存储或传输格式，如 JSON、YAML、CBOR 等。serde通过提供Serialize和Deserialize这两个核心 trait，让我们可以轻松地将 Rust 数据类型转换为其他格式，或者从其他格式还原为 Rust 数据类型 。
+
+serde-wasm-bindgen 的集成
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+serde-wasm-bindgen 是 serde 与 wasm-bindgen 的集成库，它为 wasm-bindgen 提供了 Serialize 和 Deserialize 这两个 trait 的实现，使得我们可以直接在 Rust 中使用 serde 来序列化和反序列化 wasm-bindgen 支持的数据类型。
+
+Cargo.toml 中添加依赖
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+.. code-block:: toml
+  :caption: Cargo.toml
+
+  [dependencies]
+  serde = { version = "1.0.228", features = ["derive"] }
+  serde-wasm-bindgen = "0.6.5"
+
+有一个包含多个Point的Points结构体，并且希望在 Rust 和 JavaScript 之间传递它
+
+.. code-block:: rust
+  :caption: lib.rs
+
+  use serde::{Serialize, Deserialize};
+  #[derive(Serialize, Deserialize, Debug)]
+  pub struct Point {
+      pub points: Vec<Point>,
+  }
+
+在 Rust 中，我们可以使用serde-wasm-bindgen提供的函数来进行序列化和反序列化。
+
+.. code-block:: rust
+  :caption: lib.rs
+
+  
+
 
 
 
