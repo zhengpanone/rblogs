@@ -5,6 +5,7 @@
     "autobuild",
     "bootcamp",
     "copybutton",
+    "literalinclude",
     "msvc",
     "msvcrt",
     "nextest",
