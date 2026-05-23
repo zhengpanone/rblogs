@@ -15,6 +15,7 @@
     "rlib",
     "rustwasm",
     "serializinghtml",
+    "smallseg",
     "sphinxcontrib",
     "structopt",
     "tlsv",
