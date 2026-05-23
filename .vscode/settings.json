@@ -6,13 +6,16 @@
         "--ignore D004",
         "--ignore D005"
     ],
-     "esbonio.sphinx.pythonCommand": [
-    "./.venv/bin/python"
-  ],
+    "esbonio.sphinx.pythonCommand": [
+        "./.venv/Scripts/python.exe"
+    ],
+    "esbonio.logging.level": "debug",
     "esbonio.sphinx.confDir": "source",
     "restructuredtext.updateOnTextChanged": "true",
     "restructuredtext.updateDelay": 1,
-
+    "isort.interpreter": [
+        ".venv/Scripts/python.exe"
+    ],
     "liveServer.settings.port": 5501,
     "cSpell.words": [
         "gblogs",
