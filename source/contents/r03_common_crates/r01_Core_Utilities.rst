@@ -36,6 +36,18 @@ config、dotenvy
 
 config 配置文件、dotenvy 环境变量
 
+
+
+创建项目
+-----------------
+
+.. code-block:: console
+
+  $ cargo new config_demo --vcs none
+  $ cd config_demo
+  $ cargo add config dotenvy
+  $ cargo add serde -F derive
+
 项目结构
 ---------------
 
@@ -76,6 +88,8 @@ application.toml
   :caption: src/config/mod.rs
 
   use serde::Deserialize;
+  use config::{Config, File, Environment};
+  use dotenvy::dotenv;
 
   #[derive(Debug, Deserialize)]
   pub struct Settings {
@@ -91,22 +105,16 @@ application.toml
   }
 
 
-加载配置
--------------------
-
-.. code-block:: rust
-  :caption: src/main.rs
-
-  use config::{Config, File, Environment};
-  use dotenvy::dotenv;
-
   pub fn load_config() -> Result<Settings, config::ConfigError> {
       dotenv().ok();
 
       let settings = Config::builder()
-          .add_source(File::with_name("src/config/application"))
-          .add_source(Environment::default())
-          .build()?;
+            .set_default("database_url", "postgres://localhost:5432/mydb")
+            .expect("Failed to set default value")
+            .add_source(File::with_name("src/config/application"))
+            .add_source(Environment::default())
+            .build() 
+            .expect("Failed to load configuration");
 
       settings.try_deserialize()
   }
@@ -141,3 +149,52 @@ main.rs
     database_url: "mysql://root:123456@localhost/demo",
   }
 
+Environment 覆盖规则
+------------------------
+
+``Environment::default()：``
+
+会自动读取：
+
+.. code-block:: text
+
+  APP_NAME=xxx
+  SERVER__PORT=9090
+
+双下划线：``__`` 表示嵌套。
+
+推荐完整写法（生产）
+
+.. code-block:: rust
+
+  let settings = Config::builder()
+      .add_source(File::with_name("config/default"))
+      .add_source(File::with_name("config/local").required(false))
+      .add_source(Environment::default().separator("__"))
+      .build()?;
+
+
+推荐目录结构
+------------------------
+
+.. code-block:: text
+
+  config/
+  ├─ default.toml
+  ├─ dev.toml
+  ├─ test.toml
+  ├─ prod.toml
+
+
+按环境加载
+-------------------
+
+.. code-block:: rust
+
+  let profile = std::env::var("APP_ENV")
+      .unwrap_or_else(|_| "dev".into());
+
+  let settings = Config::builder()
+      .add_source(File::with_name("config/default"))
+      .add_source(File::with_name(&format!("config/{}", profile)))
+      .build()?;
