@@ -294,7 +294,7 @@ inspect()
 
   let v = vec![1, 2, 3, 4, 5];
 
-let result: Vec<i32> = v.iter()
+  let result: Vec<i32> = v.iter()
     .inspect(|x| println!("before map: {}", x))
     .map(|x| x * 2)
     .inspect(|x| println!("after map: {}", x))

@@ -1,18 +1,9 @@
 {
-    "restructuredtext.linter.extraArgs": [
-        "--ignore D000",
-        "--ignore D001",
-        "--ignore D002",
-        "--ignore D004",
-        "--ignore D005"
-    ],
     "esbonio.sphinx.pythonCommand": [
         "./.venv/Scripts/python.exe"
     ],
+    "esbonio.server.pythonCommand": "${workspaceFolder}/.venv/Scripts/python.exe",
     "esbonio.logging.level": "debug",
-    "esbonio.sphinx.confDir": "source",
-    "restructuredtext.updateOnTextChanged": "true",
-    "restructuredtext.updateDelay": 1,
     "isort.interpreter": [
         ".venv/Scripts/python.exe"
     ],
