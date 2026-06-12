@@ -185,6 +185,355 @@ git 仓库作为依赖包
   native = { path = "native/x86_64" }
 
 
+crate-type
+=================
+
+在 Rust 的 ``Cargo.toml`` 中:
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"]
+
+表示这个库同时编译为：
+
+.. code-block:: text
+
+  1. rlib   （Rust库）
+  2. cdylib （动态链接库）
+
+
+rlib 是什么
+------------------------------
+
+Rust 默认生成的库格式。
+
+例如：
+
+.. code-block:: toml
+
+  [lib]
+  name = "my_lib"
+
+执行：
+
+.. code-block:: shell
+
+  cargo build
+
+生成：
+
+.. code-block:: text
+
+  target/debug/
+  └── libmy_lib.rlib
+
+rlib 只能被 Rust 使用：
+
+.. code-block:: rust
+
+  use my_lib::hello;
+
+不能被：
+
+.. code-block:: text
+
+  Java
+  Python
+  C
+  Go
+  Node.js
+
+直接调用。
+
+cdylib 是什么
+------------------------------
+
+cdylib 是给其它语言调用的动态库。
+
+生成：
+
+Linux
+
+.. code-block:: text
+
+  libmy_lib.so
+
+Windows
+
+.. code-block:: text
+  
+  my_lib.dll
+
+macOS
+
+.. code-block:: text
+
+  libmy_lib.dylib
+
+例如：
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib"]
+
+Rust：
+
+.. code-block:: rust
+
+  #[unsafe(no_mangle)]
+  pub extern "C" fn add(a: i32, b: i32) -> i32 {
+      a + b
+  }
+
+编译：
+
+.. code-block:: shell
+
+  cargo build --release
+
+得到：
+
+.. code-block:: text
+
+  my_lib.dll
+
+然后：
+
+Python
+
+.. code-block:: python
+
+  import ctypes
+
+  lib = ctypes.CDLL("./my_lib.dll")
+
+  print(lib.add(1, 2))
+
+为什么同时写
+
+很多项目：
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"]
+
+原因：
+
+Rust内部使用
+
+.. code-block:: text
+
+  rlib
+
+供其它 Rust crate 引用。
+
+对外提供接口
+
+.. code-block:: text
+
+  cdylib
+
+供：
+
+.. code-block:: text
+
+  Java JNI
+  Python ctypes
+  Node.js
+  Go cgo
+  C/C++
+
+调用。
+
+常见 crate-type
+----------------------
+
+
+rlib
+>>>>>>>>>>>>>
+
+.. code-block:: toml
+
+  crate-type = ["rlib"]
+
+Rust静态库。
+
+dylib
+>>>>>>>>>>>>>
+
+.. code-block:: toml
+
+  crate-type = ["dylib"]
+
+Rust动态库。
+
+依赖 Rust Runtime。
+
+较少使用。
+
+cdylib
+>>>>>>>>>>>>>
+
+.. code-block:: toml
+
+  crate-type = ["cdylib"]
+
+给非 Rust 语言调用。
+
+最常见。
+
+staticlib
+>>>>>>>>>>>>>
+
+.. code-block:: toml
+
+  crate-type = ["staticlib"]
+
+生成：
+
+Linux：
+
+.. code-block:: text
+
+  libxxx.a
+
+Windows：
+
+.. code-block:: text
+
+  xxx.lib
+
+完全静态链接。
+
+适合：
+
+.. code-block:: text
+
+  C++
+  Go
+  嵌入式
+
+
+proc-macro
+>>>>>>>>>>>>>
+
+.. code-block:: toml
+
+  crate-type = ["proc-macro"]
+
+过程宏库。
+
+例如：
+
+.. code-block:: rust
+
+  #[derive(Serialize)]
+
+背后就是 proc-macro。
+
+实际项目例子
+----------------------
+
+PyO3
+
+Python扩展：
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib"]
+
+生成：
+
+.. code-block:: text
+
+  xxx.pyd
+
+供 Python 导入。
+
+JNI
+
+Java调用：
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib"]
+
+生成：
+
+.. code-block:: text
+
+  xxx.dll
+
+供 JNI 加载。
+
+Rust SDK
+
+既给 Rust 用又给外部用：
+
+.. code-block:: toml
+
+  [lib]
+  crate-type = ["cdylib", "rlib"]
+
+例如：
+
+.. code-block:: text
+
+  sdk
+  ├── Rust调用
+  └── Java调用
+
+查看生成结果
+
+执行：
+
+.. code-block:: shell
+
+  cargo build --release
+
+然后：
+
+.. code-block:: text
+
+  ls target/release
+
+Linux：
+
+.. code-block:: text
+
+  libmy_lib.rlib
+  libmy_lib.so
+
+Windows：
+
+.. code-block:: text
+
+  my_lib.dll
+  my_lib.rlib
+
+所以：
+
+.. code-block:: toml
+
+  crate-type = ["cdylib", "rlib"]
+
+的含义就是：
+
+同时生成：
+
+.. code-block:: text
+
+  ✓ Rust原生库（rlib）
+  ✓ C兼容动态库（cdylib）
+
+  既能给 Rust crate 使用，
+  又能给 Java/Python/Go/C++ 等语言调用。
+
 
 
 ..  _crates.io: https://crates.io/
