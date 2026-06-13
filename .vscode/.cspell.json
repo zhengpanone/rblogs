@@ -24,6 +24,7 @@
     "structopt",
     "tlsv",
     "toctree",
+    "usize",
     "Vite",
     "webassembly"
   ]

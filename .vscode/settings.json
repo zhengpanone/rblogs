@@ -4,6 +4,9 @@
     ],
     "esbonio.server.pythonCommand": "${workspaceFolder}/.venv/Scripts/python.exe",
     "esbonio.logging.level": "debug",
+
+    "esbonio.preview.synchronizeScroll": "editorWithPreview",
+
     "isort.interpreter": [
         ".venv/Scripts/python.exe"
     ],
