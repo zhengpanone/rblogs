@@ -147,6 +147,7 @@ as_ref()
 
 as_deref()
 ===============
+
 .. code-block:: rust
 
   let s = Some(String::from("abc"));

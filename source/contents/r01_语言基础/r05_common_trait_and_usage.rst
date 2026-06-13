@@ -8,26 +8,46 @@
 From<T>
 ---------------
 
-👉 把一种类型 无损 转换成另一种类型。
-📌 例子： ``let s: String = String::from("hello");``
+把一种类型 无损 转换成另一种类型。
+例子： ``let s: String = String::from("hello");``
+
+.. code-block:: rust
+  :caption: From 的例子
+
+  struct UserId(u64);
+
+  impl From<u64> for UserId {
+      fn from(value: u64) -> Self {
+          UserId(value)
+      }
+  }
+
+  fn main(){
+      let id = UserId::from(1234567890);
+      println!("{}", id);
+
+      let id:UserId = 100.into();
+  }
+
+
 
 Into<T>
 ---------------
 
-👉 From 的反向实现。只要实现了 From<A> for B，就自动实现 Into<B> for A。
-📌 常用在泛型函数里： ``fn foo<T: Into<String>>(s: T)``。
+From 的反向实现。只要实现了 From<A> for B，就自动实现 Into<B> for A。
+常用在泛型函数里： ``fn foo<T: Into<String>>(s: T)``。
 
 TryFrom<T> / TryInto<T>
 -----------------------------
 
-👉 带错误处理的转换（可能失败）。
-📌 例子： ``let n: u8 = u8::try_from(300).unwrap_err()``;
+带错误处理的转换（可能失败）。
+例子： ``let n: u8 = u8::try_from(300).unwrap_err()``;
 
 FromStr
 ---------------
 
-👉 从字符串解析出某个类型。
-📌 例子： ``let ip: IpAddr = "127.0.0.1".parse().unwrap()``;
+从字符串解析出某个类型。
+例子： ``let ip: IpAddr = "127.0.0.1".parse().unwrap()``;
 
 运算符重载
 ===============
@@ -35,25 +55,76 @@ FromStr
 Add, Sub, Mul, Div, Rem
 ---------------------------------
 
-👉 定义 + - * / % 运算。
-📌 例子：impl Add for Point { … } 可以自定义点的加法。
+定义 + - * / % 运算。
+例子：impl Add for Point { … } 可以自定义点的加法。
 
 Neg
 ---------------------
 
-👉 定义一元负号 -x。
+定义一元负号 -x。
 
 Index, IndexMut
 -----------------------------
 
-👉 实现 [] 下标操作。
-📌 例子：vec[0] 背后就是调用了 Index。
+实现 [] 下标操作。
+例子：vec[0] 背后就是调用了 Index。
 
 Deref, DerefMut
 -----------------------------
 
-👉 智能指针解引用。
-📌 Box<T>、Rc<T> 等就是通过实现 Deref 来模拟指针的。
+智能指针解引用。
+Box<T>、Rc<T> 等就是通过实现 Deref 来模拟指针的。
+
+.. code-block:: rust
+  :caption: Deref 的例子
+
+  use std::ops::Deref;
+
+  struct UserName(String);
+
+  impl Deref for UserName {
+      type Target = String;
+
+      fn deref(&self) -> &Self::Target {
+          &self.0
+      }
+  }
+
+  fn main(){
+      let name = UserName(String::from("Alice"));
+      println!("{}", name.len());
+      // 等价于
+      println!("{}", name.0.len());
+  }
+
+.. code-block:: rust
+  :caption: DerefMut 的例子
+
+  use std::ops::{Deref, DerefMut};
+
+  struct UserName(String);
+
+  impl Deref for UserName {
+      type Target = String;
+
+      fn deref(&self) -> &String {
+          &self.0
+      }
+  }
+
+  impl DerefMut for UserName {
+      fn deref_mut(&mut self) -> &mut String {
+          &mut self.0
+      }
+  }
+
+  fn main(){
+      let mut name = UserName(String::from("Alice"));
+      name.push_str(" Bob");
+      println!("{}", name);
+  }
+
+
 
 格式化
 ===============
@@ -61,20 +132,41 @@ Deref, DerefMut
 Display
 -----------------------------
 
-👉 人类可读的格式化，用 {}。
-📌 例子：println!("{}", my_struct);
+人类可读的格式化，用 {}。
+例子：``println!("{}", my_struct)``
+
+.. code-block:: rust
+
+  use std::fmt;
+
+  struct UserId(u64);
+
+  impl fmt::Display for UserId {
+      fn fmt(
+          &self,
+          f: &mut fmt::Formatter<'_>,
+      ) -> fmt::Result {
+          write!(f, "{}", self.0)
+      }
+  }
+
+  fn main(){
+      let id = UserId(1234567890);
+      println!("{}", id);
+  }
+
 
 Debug
 -----------------------------
 
-👉 调试格式化，用 {:?}。
-📌 几乎所有类型都会 #[derive(Debug)]。
+调试格式化，用 {:?}。
+几乎所有类型都会 #[derive(Debug)]。
 
 Write / Read（来自 std::io）
 ----------------------------------
 
-👉 IO 写入/读取接口。
-📌 文件、网络流都实现了这些 trait。
+IO 写入/读取接口。
+文件、网络流都实现了这些 trait。
 
 集合
 ===============
@@ -82,26 +174,26 @@ Write / Read（来自 std::io）
 Iterator
 ------------------------
 
-👉 所有迭代器的核心 trait，提供 .next()。
-📌 for 循环、map、filter 都基于它。
+所有迭代器的核心 trait，提供 .next()。
+for 循环、map、filter 都基于它。
 
 IntoIterator
 ------------------------
 
-👉 用于 for x in collection。
-📌 Vec<T> 同时实现了按值、按引用、按可变引用的 IntoIterator。
+用于 for x in collection。
+Vec<T> 同时实现了按值、按引用、按可变引用的 IntoIterator。
 
 Extend
 -------------------------
 
-👉 往集合里追加元素。
-📌 例子：vec.extend(&[1,2,3]);
+往集合里追加元素。
+例子：vec.extend(&[1,2,3]);
 
 FromIterator
 --------------------------
 
-👉 把迭代器转成集合。
-📌 例子：let v: Vec<i32> = (0..5).collect();
+把迭代器转成集合。
+例子：let v: Vec<i32> = (0..5).collect();
 
 并发 & 生命周期
 =======================
@@ -109,32 +201,32 @@ FromIterator
 Send
 ----------------------
 
-👉 类型能否安全地跨线程转移所有权。
-📌 大多数类型都是 Send，除了 Rc<T>。
+类型能否安全地跨线程转移所有权。
+大多数类型都是 Send，除了 Rc<T>。
 
 Sync
 ----------------------------------
 
-👉 类型能否安全地跨线程共享引用。
-📌 Arc<T> 是 Sync，Rc<T> 不是。
+类型能否安全地跨线程共享引用。
+Arc<T> 是 Sync，Rc<T> 不是。
 
 Drop
 ----------------------------------
 
-👉 自定义资源释放逻辑，类似 C++ 的析构函数。
-📌 File、MutexGuard 都用它来自动清理资源。
+自定义资源释放逻辑，类似 C++ 的析构函数。
+File、MutexGuard 都用它来自动清理资源。
 
 Clone
 ----------------------------------
 
-👉 显式复制一个值。
-📌 和 Copy 不同，Clone 可以做深拷贝。
+显式复制一个值。
+和 Copy 不同，Clone 可以做深拷贝。
 
 Copy
 ----------------------------------
 
-👉 位拷贝（轻量类型）。
-📌 数字、布尔、引用是 Copy，String、Vec 不是。
+位拷贝（轻量类型）。
+数字、布尔、引用是 Copy，String、Vec 不是。
 
 比较 & 默认
 =====================
@@ -142,22 +234,22 @@ Copy
 PartialEq / Eq
 ------------------------
 
-👉 定义 ==、!=。
-📌 Eq 代表完全等价，PartialEq 允许“部分等价”（比如浮点数 NaN）。
+定义 ==、!=。
+Eq 代表完全等价，PartialEq 允许“部分等价”（比如浮点数 NaN）。
 
 PartialOrd / Ord
 -----------------------
 
-👉 定义排序比较 < > <= >=。
-📌 PartialOrd 允许不可比（NaN），Ord 代表全序。
+定义排序比较 < > <= >=。
+PartialOrd 允许不可比（NaN），Ord 代表全序。
 
 Hash
 ------------------------
 
-👉 定义哈希值，用于 HashMap、HashSet。
+定义哈希值，用于 HashMap、HashSet。
 
 Default
 -----------------------
 
-👉 提供一个默认值。
-📌 例子：let v: Vec<i32> = Default::default();
+提供一个默认值。
+例子：let v: Vec<i32> = Default::default();
