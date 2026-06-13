@@ -2,6 +2,10 @@
 常见的Trait和用法
 ==================
 
+.. contents:: 目录
+   :depth: 3
+   :local:
+
 转换
 ===============
 
@@ -72,6 +76,9 @@ Index, IndexMut
 Deref, DerefMut
 -----------------------------
 
+Deref示例
+>>>>>>>>>>>>>>
+
 智能指针解引用。
 Box<T>、Rc<T> 等就是通过实现 Deref 来模拟指针的。
 
@@ -96,6 +103,354 @@ Box<T>、Rc<T> 等就是通过实现 Deref 来模拟指针的。
       // 等价于
       println!("{}", name.0.len());
   }
+
+Deref Trait + Deref Coercion(解引用强制转换)示例
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: rust
+
+    use std::ops::Deref;
+
+    struct MyBox<T>(T);
+
+    impl<T> Deref for MyBox<T> {
+        type Target = T;
+
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+
+    fn hello(s: &str) {
+        println!("{}", s);
+    }
+
+    fn main() {
+        let x = MyBox("hello");
+
+        hello(&x);
+    }
+
+``hello(&x);`` x 的类型是 ``MyBox<&str>``, 但是``hello()`` 需要的是 ``&str`` 。为什么能直接传？答案就是：
+
+.. code-block:: text
+
+    Deref Trait
+    +
+    Deref Coercion（自动解引用转换）
+
+理解 MyBox<T>
+""""""""""""""""""""""
+
+这是一个 **Tuple Struct**：
+
+.. code-block:: rust
+
+    struct MyBox<T>(T);
+
+例如：
+
+.. code-block:: rust
+
+    let x = MyBox("hello");
+
+实际等价于：
+
+.. code-block:: rust
+
+    let x = MyBox::<&str>("hello");
+    
+内存：
+
+.. code-block:: text
+        
+    x
+    │
+    └── "hello"
+
+类型：
+
+.. code-block:: rust
+
+    MyBox<&str>
+
+理解 Deref Trait
+""""""""""""""""""""""
+   
+Rust 标准库：
+
+.. code-block:: rust
+
+    pub trait Deref {
+        type Target;
+
+        fn deref(&self) -> &Self::Target;
+    }
+
+作用：
+
+.. code-block:: text
+
+    告诉编译器：
+    如何从当前类型得到内部引用
+
+实现：
+
+.. code-block:: rust
+
+    impl<T> Deref for MyBox<T> {
+        type Target = T;
+
+        fn deref(&self) -> &T {
+            &self.0
+        }
+    }
+
+对于：
+
+.. code-block:: rust
+
+    MyBox<&str>
+
+等价于：
+
+.. code-block:: rust
+
+    impl Deref for MyBox<&str> {
+        type Target = &str;
+
+        fn deref(&self) -> &&str {
+            &self.0
+        }
+    }
+
+注意返回值：
+
+.. code-block:: rust
+    
+    &&str
+
+为什么是 &&str
+""""""""""""""""""""""
+
+假设：
+
+.. code-block:: rust
+
+    let x = MyBox("hello");
+
+内部：
+
+.. code-block:: text
+
+    x.0
+
+类型：
+
+.. code-block:: text
+
+    &str
+
+而：
+
+.. code-block:: text
+
+    &self.0
+
+是：
+
+.. code-block:: text
+
+    &&str
+
+因为：
+
+.. code-block:: text
+
+    x.0       -> &str
+    &x.0      -> &&str
+
+所以：
+
+.. code-block:: text
+
+    x.deref()
+
+返回：
+
+.. code-block:: text
+
+    &&str
+
+hello(&x) 发生了什么
+""""""""""""""""""""""""""""
+
+函数：
+
+.. code-block:: rust
+
+    fn hello(s: &str)
+
+需要：
+
+.. code-block:: rust
+
+    &str
+
+传入：
+
+.. code-block:: rust
+
+    hello(&x);
+
+此时：
+
+.. code-block:: rust
+
+    &x
+
+类型：
+
+.. code-block:: rust
+
+    &MyBox<&str>
+
+编译器发现：
+
+.. code-block:: text
+
+    需要:
+
+    &str
+
+    实际:
+    &MyBox<&str>
+
+不匹配。
+
+于是开始寻找：
+
+.. code-block:: rust
+
+    Deref
+
+**第一次 Deref**
+""""""""""""""""""""""
+
+编译器自动调用：
+
+.. code-block:: rust
+
+    Deref::deref(&x)
+
+即：
+
+.. code-block:: rust
+
+    x.deref()
+
+得到：
+
+.. code-block:: rust
+
+    &&str
+
+此时：
+
+.. code-block:: text
+
+    &MyBox<&str>
+        ↓ Deref
+    &&str
+
+**第二次 Deref**
+""""""""""""""""""""""""""
+
+编译器继续发现：
+
+.. code-block:: rust
+
+    &&str
+
+还不是：
+
+.. code-block:: rust
+
+    &str
+
+于是再解一次引用：
+
+.. code-block:: text
+
+    &&str
+    ↓
+    &str
+
+最终：
+
+.. code-block:: rust
+
+    hello(&x);
+
+被编译器理解为：
+
+.. code-block:: rust
+
+    hello(*x.deref());
+
+最终参数：
+
+.. code-block:: rust
+
+    &str
+
+匹配成功。
+
+编译器实际过程
+
+.. code-block:: text
+
+    hello(&x)
+
+    &MyBox<&str>
+        ↓
+    Deref::deref()
+        ↓
+    &&str
+        ↓
+    自动解引用
+        ↓
+    &str
+        ↓
+    hello()
+
+这就是：
+
+.. code-block:: text
+
+    Deref Coercion
+    （解引用强制转换）
+
+
+Deref 最核心用途
+>>>>>>>>>>>>>>>>>>>>>>
+
+Rust 中以下类型都依赖 Deref：
+
+.. code-block:: rust
+
+    Box<T>
+    Rc<T>
+    Arc<T>
+    String
+    Vec<T>
+    Cow<T>
+    PathBuf
+    OsString
+
+
+DerefMut示例
+>>>>>>>>>>>>>>
 
 .. code-block:: rust
   :caption: DerefMut 的例子
