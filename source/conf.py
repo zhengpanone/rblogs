@@ -51,7 +51,7 @@ todo_include_todos = True
 
 
 # LaTeX配置
-latex_engine = 'xelatex'  # 或者 'pdflatex'，根据你的需求选择
+latex_engine = 'xelatex'  # 或者 'pdflatex'，lualatex，根据你的需求选择
 
 # 根据操作系统选择字体
 if platform.system() == 'Windows':

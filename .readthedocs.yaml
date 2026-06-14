@@ -15,11 +15,10 @@ build:
     # golang: "1.20"
   jobs:
     pre_build:
-        # 安装 Noto Color Emoji 字体
-        - sudo apt-get install -y fonts-noto-color-emoji
-        - fc-list | grep -i "emoji"   # 查看实际字体名，在构建日志里可见
-        # 刷新字体缓存
-        - fc-cache -fv
+      - mkdir -p ~/.local/share/fonts
+      - wget -q "https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf" -O ~/.local/share/fonts/NotoColorEmoji.ttf
+      - fc-cache -fv ~/.local/share/fonts
+      - fc-list | grep -i "noto"
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
