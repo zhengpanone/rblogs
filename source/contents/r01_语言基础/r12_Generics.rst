@@ -57,8 +57,11 @@
 
 可以看到，除了类型不同，逻辑完全一样。泛型解决的就是这个问题。
 
+泛型语法详解
+===================
+
 泛型函数
-============
+-----------------
 
 使用泛型将上面的代码统一：
 
@@ -85,7 +88,7 @@
 其中 ``<T>`` 声明泛型参数，``PartialOrd`` 是 Trait 约束，表示 ``T`` 必须支持 ``>`` 比较。
 
 泛型结构体
-==============
+-----------------
 
 单个泛型参数：
 
@@ -116,7 +119,7 @@
    }
 
 泛型枚举
-============
+-----------------
 
 Rust 标准库中最经典的泛型枚举：
 
@@ -145,7 +148,7 @@ Rust 标准库中最经典的泛型枚举：
    }
 
 泛型方法
-============
+-----------------
 
 在 ``impl`` 块中为泛型结构体实现方法：
 
@@ -172,7 +175,7 @@ Rust 标准库中最经典的泛型枚举：
    }
 
 为特定类型实现方法
-======================
+----------------------
 
 可以对泛型参数的具体类型单独实现方法：
 
@@ -203,7 +206,8 @@ Trait 约束（Trait Bound）
 
 泛型不是万能的——需要对类型行为进行约束。
 
-基本语法：
+基本语法
+--------------------
 
 .. code-block:: rust
 
@@ -220,7 +224,8 @@ Trait 约束（Trait Bound）
        println!("{}", item.summarize());
    }
 
-多个 Trait 约束：
+多个 Trait 约束
+--------------------
 
 .. code-block:: rust
 
@@ -232,8 +237,21 @@ Trait 约束（Trait Bound）
        println!("{}", item.summarize());
    }
 
+条件实现（Blanket Implementation）
+---------------------------------------
+
+.. code-block:: rust
+
+    // 为所有实现了 Display 的类型实现 ToString
+    impl<T: Display> ToString for T {
+        // ...
+    }
+
+    // 这意味着任何实现了 Display 的类型都可以调用 .to_string()
+    let s = 3.to_string(); // "3"
+
 通过 where 简化复杂约束
-============================
+--------------------------------
 
 当约束很多时，``where`` 子句比内联写法清晰得多：
 
@@ -265,7 +283,7 @@ Trait 约束（Trait Bound）
    }
 
 泛型 + Trait 综合示例
-==========================
+--------------------------
 
 定义一个 ``Summary`` Trait，然后用泛型约束使用它：
 
@@ -345,7 +363,17 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
        a + b
    }
 
-这就是**零成本抽象（Zero-Cost Abstraction）**：
+这就是 **零成本抽象（Zero-Cost Abstraction）**：
+
+好处：
+
+- 运行时性能与非泛型代码完全相同
+- 每个具体类型都有独立的优化机会
+
+代价：
+
+- 编译时间增加
+- 二进制体积增大（代码膨胀）
 
 .. list-table:: 泛型 vs 动态派发对比
    :header-rows: 1
@@ -389,15 +417,18 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
        }
    }
 
-泛型与关联类型
+高级泛型模式
 ====================
+
+关联类型（Associated Types）
+------------------------------
 
 关联类型是与 Trait 绑定的类型占位符，常与泛型配合：
 
 .. code-block:: rust
 
    trait Container {
-       type Item;
+       type Item; // 关联类型
        fn get(&self, index: usize) -> Option<&Self::Item>;
    }
 
@@ -407,6 +438,41 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
            self.as_slice().get(index)
        }
    }
+
+泛型关联类型（Generic Associated Types, GAT）
+------------------------------------------------------------
+
+.. code-block:: rust
+
+    trait Container {
+        type Item<T>; // GAT：泛型关联类型
+        
+        fn get<T>(&self, key: T) -> Option<Self::Item<T>>;
+    }
+
+默认泛型参数
+----------------------------
+
+.. code-block:: rust
+
+    use std::ops::Add;
+
+    #[derive(Debug, PartialEq)]
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    impl Add for Point { // 默认为 Self
+        type Output = Point;
+
+        fn add(self, other: Point) -> Point {
+            Point {
+                x: self.x + other.x,
+                y: self.y + other.y,
+            }
+        }
+    }
 
 关联类型 vs 泛型的区别：
 
@@ -430,13 +496,14 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
      - ``Iterator::Item``
      - ``From<T>`` / ``Into<T>``
 
-泛型与常量泛型（Const Generics）
-=====================================
+常量泛型（Const Generics）
+---------------------------
 
 通过常量值参数化类型（Rust 1.51+ 稳定）：
 
 .. code-block:: rust
 
+    // 数组类型 [T; N] 中的 N 就是常量泛型
    struct Array<T, const N: usize> {
        data: [T; N],
    }
@@ -450,6 +517,11 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
            N
        }
    }
+
+   // 固定大小的矩阵
+    struct Matrix<T, const ROWS: usize, const COLS: usize> {
+        data: [[T; COLS]; ROWS],
+    }
 
    fn main() {
        let arr1: Array<i32, 3> = Array::new([1, 2, 3]);
@@ -474,7 +546,7 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
    }
 
 泛型参数的默认类型
-========================
+-------------------
 
 可以为泛型参数指定默认类型：
 
@@ -538,7 +610,7 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
      - ``fn foo<const N: usize>(arr: [i32; N])``
 
 条件实现（Conditional Implementation）
-===========================================
+----------------------------------------
 
 仅在泛型参数满足某些条件时才实现 Trait：
 
@@ -586,8 +658,8 @@ Rust 泛型在编译时展开为具体类型，运行时零开销：
        // ...
    }
 
-泛型与高级 Trait Bound
-============================
+Trait Bound
+---------------------------
 
 .. code-block:: rust
 

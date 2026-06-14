@@ -2,11 +2,13 @@
 智能指针（Smart Pointers）
 ================================
 
+智能指针（Smart Pointers）是 Rust 中一类特殊的类型，它们不仅持有指向数据的指针，还拥有额外的元数据和功能。最常见的智能指针是 Box<T>、Rc<T>、RefCell<T>以及 Arc<Mutex<T>>。
+
 智能指针是 Rust 中管理内存和资源的利器。它像指针一样工作，但带有额外的元数据和能力，例如引用计数、自动释放、内部可变性等。
 
 在 Rust 中，智能指针通常通过实现 ``Deref`` 和 ``Drop`` 两个 Trait 来工作：
 
-- ``Deref``：让智能指针可以像普通引用一样被解引用
+- ``Deref``：让智能指针可以像普通引用一样被解引用 ``*``
 - ``Drop``：在离开作用域时自动清理资源（RAII）
 
 .. contents:: 目录
@@ -52,8 +54,8 @@
      - ``&x``
      - ``Box<T>``, ``Rc<T>``, ``Arc<T>``
 
-Box\<T\>：堆分配
-=====================
+Box<\T\>—— 最简单的智能指针
+================================
 
 ``Box<T>`` 是最简单的智能指针，将数据分配到堆上。
 
@@ -65,7 +67,7 @@ Box\<T\>：堆分配
        // 在堆上分配一个 i32
        let b = Box::new(5);
        println!("b = {}", b); // 自动解引用
-
+       println!("b = {}", *b); // 显式解引用
        // 离开作用域，堆内存自动释放
    }
 
@@ -84,7 +86,17 @@ Box\<T\>：堆分配
    * - Trait Object
      - ``Box<dyn Trait>`` 实现动态派发
 
-递归类型示例（链表）：
+在堆上分配数据（而不是栈）
+
+.. code-block:: rust
+
+    // 栈上分配（默认）
+    let x = 5; 
+
+    // 堆上分配
+    let y = Box::new(5);
+
+递归类型（Recursive Types）示例（链表）：
 
 .. code-block:: rust
 
@@ -105,11 +117,11 @@ Box\<T\>：堆分配
 .. code-block:: text
 
    enum List {
-       Cons(i32, List),  // ❌ 编译错误：递归类型大小无限
+       Cons(i32, List),  // 编译错误：递归类型大小无限
    }
 
    enum List {
-       Cons(i32, Box<List>),  // ✅ Box 大小固定（一个指针大小）
+       Cons(i32, Box<List>),  // Box 大小固定（一个指针大小）
    }
 
 Trait Object：
@@ -141,8 +153,20 @@ Trait Object：
        }
    }
 
+Box 的内存布局
+
+.. code-block:: rust
+
+    let b = Box::new(5);
+
+.. code-block:: text
+
+    栈：b → (ptr) → 堆：(5)
+
+Box本身在栈上只占一个指针大小（8 字节），数据存储在堆上。
+
 Deref Trait：像引用一样使用
-================================
+-----------------------------
 
 智能指针的核心能力来自 ``Deref``：
 
@@ -186,8 +210,8 @@ Deref Trait：像引用一样使用
 
 编译器自动执行多步解引用，直到类型匹配。
 
-1. Drop Trait：自动清理
-=========================
+Drop Trait：自动清理
+-----------------------------
 
 智能指针离开作用域时自动执行清理：
 
@@ -235,7 +259,7 @@ Deref Trait：像引用一样使用
 
 注意：必须用 ``std::mem::drop()``，不能直接调用 ``c.drop()``。
 
-5. Rc\<T\>：引用计数（单线程）
+Rc\<T\>：引用计数（单线程）
 ================================
 
 ``Rc<T>`` 允许多个所有者共享同一份数据，引用计数归零时释放。
@@ -275,9 +299,36 @@ Deref Trait：像引用一样使用
    ├── Rc::clone() → strong_count + 1
    └── Drop → strong_count - 1 → 0 → 释放
 
+经典用例：图的共享节点
+
+.. code-block:: rust
+
+    use std::rc::Rc;
+
+    #[derive(Debug)]
+    enum List {
+        Cons(i32, Rc<List>),
+        Nil,
+    }
+
+    use List::{Cons, Nil};
+
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    println!("count after creating a = {}", Rc::strong_count(&a)); // 1
+
+    let b = Cons(3, Rc::clone(&a));
+    println!("count after creating b = {}", Rc::strong_count(&a)); // 2
+
+    {
+        let c = Cons(4, Rc::clone(&a));
+        println!("count after creating c = {}", Rc::strong_count(&a)); // 3
+    }
+    println!("count after c goes out of scope = {}", Rc::strong_count(&a)); // 2
+
+
 ``Rc<T>`` 的限制：只读共享，不能修改内部数据（需要配合 ``RefCell<T>``）。
 
-6. RefCell\<T\>：内部可变性
+RefCell\<T\>：内部可变性
 =============================
 
 ``RefCell<T>`` 将借用检查从编译期推迟到运行时，允许在拥有不可变引用时修改内部数据。
@@ -325,10 +376,10 @@ Deref Trait：像引用一样使用
        let data = RefCell::new(42);
 
        let a = data.borrow();
-       let b = data.borrow_mut(); // ❌ 运行时 panic：已有不可变借用
+       let b = data.borrow_mut(); // 运行时 panic：已有不可变借用
    }
 
-7. Rc\<RefCell\<T\>\>：共享可变数据
+Rc\<RefCell\<T\>\>：共享可变数据
 ======================================
 
 ``Rc`` 提供多所有权，``RefCell`` 提供内部可变性，两者组合使用：
@@ -364,7 +415,7 @@ Deref Trait：像引用一样使用
 
 典型应用：树结构、图结构等需要共享可变数据的场景。
 
-8. Arc\<T\>：原子引用计数（多线程）
+1. Arc\<T\>：原子引用计数（多线程）
 =====================================
 
 ``Arc<T>`` 与 ``Rc<T>`` 类似，但使用原子操作保证线程安全：
