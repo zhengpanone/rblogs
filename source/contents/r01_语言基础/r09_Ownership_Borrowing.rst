@@ -52,7 +52,7 @@
 
 内存变化示意：
 
-.. code-block:: rust
+.. code-block:: text
 
   移动前：
   s1 → 栈: (ptr, len, capacity) → 堆: "hello"
