@@ -22,3 +22,5 @@ cargo edit,允许您直接从命令行添加、升级和删除依赖项，而无
 cargo modules,cargo-modules 是一个用于可视化 Rust 项目模块结构的 Cargo 插件
 cargo make,高级构建工具和任务运行器，提供了一个扩展的任务定义格式，允许定义更复杂的构建流程和任务（大型项目尤其有用）
 cargo Tarpaulin,用于 Rust 项目的代码覆盖率报告工具，让你了解项目测试的覆盖范围，对于维护高质量的代码库非常重要
+cargo fmt,格式化代码
+cargo clippy,检查代码中的常见错误和警告

@@ -15,6 +15,7 @@
     "pdfconverter",
     "Pijul",
     "println",
+    "RAII",
     "rblogs",
     "rlib",
     "rustwasm",
