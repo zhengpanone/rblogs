@@ -55,11 +55,17 @@ latex_engine = 'xelatex'  # 或者 'pdflatex'，lualatex，根据你的需求选
 
 # 根据操作系统选择字体
 if platform.system() == 'Windows':
-    cjk_font = 'SimSun'
+    cjk_main = 'SimSun'
+    cjk_sans = 'SimHei'
+    cjk_mono = 'FangSong'
 elif platform.system() == 'Darwin':  # macOS
-    cjk_font = 'Songti SC'
+    cjk_main = 'Songti SC'
+    cjk_sans = 'Heiti SC'
+    cjk_mono = 'STFangsong'
 else:  # Linux
-    cjk_font = 'Noto Sans CJK SC'
+    cjk_main = 'Noto Serif CJK SC'
+    cjk_sans = 'Noto Sans CJK SC'
+    cjk_mono = 'Noto Sans Mono CJK SC'
     
 latex_elements = {
     'papersize': 'a4paper',
@@ -67,7 +73,9 @@ latex_elements = {
     'figure_align': 'htbp',
     'preamble': r'''
     \usepackage{xeCJK}
-    \setCJKmainfont{''' + cjk_font + r'''}
+    \setCJKmainfont{''' + cjk_main + r'''}
+    \setCJKsansfont{''' + cjk_sans + r'''}
+    \setCJKmonofont{''' + cjk_mono + r'''}
     \setlength{\headheight}{14pt}  % 增加页眉高度，建议 14pt 或 15pt
     \usepackage{fontspec}
     \newfontfamily\emojifont{Noto Color Emoji}[Renderer=HarfBuzz]

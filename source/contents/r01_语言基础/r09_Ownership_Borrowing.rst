@@ -159,11 +159,11 @@
 
 内存示意：
 
-.. code-block:: rust
+.. code-block:: text
 
   s → 栈: (ptr, len, cap) → 堆: "hello"
-          ↑
-          |
+    ↑
+    |
   &s → 指向 s 的栈上指针
 
 可变引用（&mut T）
