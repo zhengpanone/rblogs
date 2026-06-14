@@ -77,8 +77,8 @@ latex_elements = {
     \setCJKsansfont{''' + cjk_sans + r'''}
     \setCJKmonofont{''' + cjk_mono + r'''}
     \setlength{\headheight}{14pt}  % 增加页眉高度，建议 14pt 或 15pt
-    \usepackage{fontspec}
-    \newfontfamily\emojifont{Noto Color Emoji}[Renderer=HarfBuzz]
+    \usepackage{newunicodechar}
+    \usepackage{amssymb}
     \usepackage{newunicodechar}
     \newunicodechar{✅}{{\emojifont ✅}}
     \newunicodechar{❌}{{\emojifont ❌}}
