@@ -68,6 +68,12 @@ latex_elements = {
     'preamble': r'''
     \usepackage{xeCJK}
     \setCJKmainfont{''' + cjk_font + r'''}
+    \setlength{\headheight}{14pt}  % 增加页眉高度，建议 14pt 或 15pt
+    \usepackage{fontspec}
+    \newfontfamily\emojifont{Noto Color Emoji}[Renderer=HarfBuzz]
+    \usepackage{newunicodechar}
+    \newunicodechar{✅}{{\emojifont ✅}}
+    \newunicodechar{❌}{{\emojifont ❌}}
     '''
     
 }

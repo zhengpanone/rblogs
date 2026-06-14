@@ -61,7 +61,7 @@ class SEG(object):
         # print(piece)
         R = []
         tmp = re.sub(
-            u"。|，|,|！|…|!|《|》|<|>|\"|'|:|：|？|\?|、|\||“|”|‘|’|；|—|（|）|·|\(|\)|　", " ", piece).split()
+            r"。|，|,|！|…|!|《|》|<|>|\"|'|:|：|？|\?|、|\||“|”|‘|’|；|—|（|）|·|\(|\)|　", " ", piece).split()
         ln1 = len(tmp)
         for i in xrange(len(tmp)-1, -1, -1):
             mc = re.split(r"([0-9A-Za-z\-\+#@_\.]+)", tmp[i])
@@ -97,7 +97,7 @@ class SEG(object):
                     elif mem2 != None:
                         delta = mem2[0]-i
                         if delta >= 1:
-                            if (delta < 5) and (re.search(u"[\w\u2E80-\u9FFF]", t) != None):
+                            if (delta < 5) and (re.search(r"[\w\u2E80-\u9FFF]", t) != None):
                                 pre = text[i-j]
                                 # print(pre)
                                 if not (pre in self.specialwords):
