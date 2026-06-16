@@ -27,6 +27,8 @@ Trait 它不仅用于接口抽象，还广泛参与：
 基本语法
 -------------------
 
+``imple A_TRAIT for A_STRUCT {...}`` 这种语法。
+
 .. code-block:: rust
 
     trait Greeter {
@@ -129,6 +131,8 @@ Trait 作为参数
         println!("Breaking news! {}", item.summarize());
     }
 
+**通过声明特定的 Trait 类型，收窄了类型 T 的范围，所以叫 Trait 约束。**
+
 多个 Trait 约束
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -154,6 +158,8 @@ Trait 作为参数
         println!("Breaking news! {}", item.summarize());
     }
 
+当我们有多个类型参数，每个类型参数又有多个 Trait 约束时，方法签名就会变得非常冗长，针对这种情况，Rust 设计了一种 where 字句，把类型参数的 Trait 约束 声明移动到 where 子句里，这会让函数的签名看上去更清晰一些。
+
 Trait 作为返回值
 --------------------------
 
@@ -167,7 +173,7 @@ Trait 作为返回值
     }
 
 
-限制：只能返回一种具体类型：
+限制： **只能返回一种具体类型** ：
 
 .. code-block:: rust
 
