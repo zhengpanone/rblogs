@@ -138,11 +138,133 @@ Rust 基本语法
 特殊类型（Special Types）
 -------------------------
 
-``!`` （Never 类型 / Never Type）
+newtype模式
+>>>>>>>>>>>>>>>>>>>>>>
 
-用于永远不会返回的函数，比如 ``panic!``、 ``loop {}`` ：
+newtype 模式：用元组结构体包装现有类型，获得类型安全。
 
 .. code-block:: rust
+
+  // 没有类型安全
+  fn login(username: String, password: String) {}
+  fn register(username: String, password: String) {}
+
+  fn main() {
+      let user = String::from("larry");
+      let pass = String::from("123456");
+      
+      // 参数顺序错了，但编译器不报错！
+      login(pass, user);  // 密码当用户名传了...
+  }
+
+用newtype解决：
+
+.. code-block:: rust
+
+  // ✅ 类型安全
+  struct Username(String);
+  struct Password(String);
+
+  fn login(username: Username, password: Password) {}
+  fn register(username: Username, password: Password) {}
+
+  fn main() {
+      let user = Username(String::from("larry"));
+      let pass = Password(String::from("123456"));
+      
+      // ❌ 现在顺序错了会编译错误！
+      // login(pass, user);  // 类型不匹配！
+      
+      login(user, pass);  // ✅ 正确
+  }
+
+newtype 的优势：
+
+  1. 类型安全：编译器帮你检查
+  2. 零开销：编译后和直接用一个样
+  #. 可以添加方法：给包装类型加专属方法
+  #. 隐藏实现细节：外面不知道里面是啥
+
+类型别名
+>>>>>>>>>>>>>>>>>
+
+类型别名：给现有类型起个"小名"，不是新类型。
+
+.. code-block:: rust
+
+  // 长名字
+  type Result<T> = std::result::Result<T, std::io::Error>;
+
+  // 用起来
+  fn read_file() -> Result<String> {
+      // ...
+  }
+
+类型别名 vs newtype：
+
+.. list-table:: 特性对比表
+   :widths: 20 30 30
+   :header-rows: 1
+
+   * - 特性
+     - 类型别名
+     - newtype
+   * - 类型检查
+     - 和原类型一样
+     - 独立类型
+   * - 开销
+     - 零
+     - 零
+   * - 添加方法
+     - 不能
+     - 能
+   * - 用途
+     - 简化名字
+     - 类型安全
+
+.. code-block:: rust
+
+  // 类型别名
+  type Meters = f64;
+  type Kilometers = f64;
+
+  fn main() {
+      let m: Meters = 1000.0;
+      let k: Kilometers = 1.0;
+      
+      // 可以相加，但可能没意义
+      let sum = m + k;  // 编译器不管
+  }
+
+  // newtype
+  struct Meters(f64);
+  struct Kilometers(f64);
+
+  fn main() {
+      let m = Meters(1000.0);
+      let k = Kilometers(1.0);
+      
+      // 不能相加，类型不同
+      // let sum = m + k;  // 编译错误！
+  }
+
+Never 类型 （Never Type）
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+never 类型： ``!`` ，表示"永远不会返回"。
+
+用于永远不会返回的函数:
+
+1. ``panic!``  程序崩溃
+2. ``loop {}``  无限循环（没有 break）
+3. ``std::process::exit()`` - 退出程序
+4. ``continue``
+
+.. code-block:: rust
+
+  fn crash() -> ! {
+      panic!("boom!");
+  }
 
   fn forever() -> ! {
     loop {}
@@ -152,10 +274,360 @@ Rust 基本语法
 
 .. code-block:: rust
 
-  let guess = match some_value {
-    Ok(val) => val,
-    Err(_) => continue,  // continue 的类型是 !
-  };
+  // let guess = match some_value {
+  //  Ok(val) => val,
+  //  Err(_) => continue,  // continue 的类型是 !
+  // };
+
+  fn main() {
+    let numbers = vec!["10", "20", "abc", "30"];
+
+    for s in numbers {
+        let guess: i32 = match s.parse::<i32>() {
+            Ok(val) => val,
+            Err(_) => {
+                println!("跳过非法输入: {}", s);
+                continue; // 类型为 !
+            }
+        };
+
+        println!("成功解析的数字: {}", guess);
+    }
+
+    println!("循环结束");
+  }
+
+never 类型的特点：
+
+- 可以转换成任何类型
+- 用在"不会执行到"的地方。
+- 不能创建 ! 类型的值
+- 只能作为返回值
+
+
+``!`` 永远不会真正返回值，所以它可以假装是任何类型。
+
+Sized特质
+>>>>>>>>>>>>>>>>>>>
+
+Sized 特质：一个类型在编译期是否拥有已知、固定的内存大小。
+
+.. code-block:: rust
+
+  pub trait Sized { }
+
+- 没有方法
+- 由编译器自动实现
+- 表示：该类型的值可以在栈上分配
+
+规则：
+
+- 大多数类型都是 ``Sized`` 的（ ``i32``、 ``String``、结构体等）
+- 有些类型不是 ``Sized`` 的（ ``str``、 ``[T]``、 ``dyn Trait``）
+
+为什么需要 Sized
+
+Rust 必须知道一个值占多少内存，才能：
+
+- 在栈上分配空间
+- 计算结构体字段偏移
+- 做指针运算
+- 生成正确的机器码
+- 所以 几乎所有泛型都隐式要求 ``Sized``。
+
+.. code-block:: rust
+
+  // 不能这样
+  let s: str = "hello";  // str 不是 Sized
+
+  // 要这样
+  let s: &str = "hello";  // &str 是 Sized（引用有固定大小）
+
+Sized 作为泛型约束：
+
+.. code-block:: rust
+
+  // 泛型参数默认是 Sized 的
+  fn generic<T>(x: T) {}  // 相当于 fn generic<T: Sized>(x: T) {}
+
+  // 如果不是 Sized，要显式标注
+  fn not_sized<T: ?Sized>(x: &T) {}  // ?Sized 表示可以是也可以不是
+
+``?Sized`` 的含义：
+
+- ``T: Sized`` → T 必须是 Sized 的
+- ``T: ?Sized`` → T 可以是 Sized 的，也可以不是
+
+.. code-block:: rust
+
+  // 可以接受 str 和 String
+  fn print_it<T: ?Sized>(x: &T) 
+  where
+      T: std::fmt::Display 
+  {
+      println!("{}", x);
+  }
+
+  fn main() {
+      print_it("hello");      // &str
+      print_it(&String::from("hello"));  // &String
+  }
+
+示例
+>>>>>>>>>>>>>
+
+newtype 模式基础
+
+.. code-block:: rust
+
+  // 包装类型
+  struct Meters(f64);
+  struct Seconds(f64);
+
+  impl Meters {
+      fn new(value: f64) -> Self {
+          Meters(value)
+      }
+      
+      fn to_kilometers(&self) -> Kilometers {
+          Kilometers(self.0 / 1000.0)
+      }
+  }
+
+  impl Seconds {
+      fn new(value: f64) -> Self {
+          Seconds(value)
+      }
+      
+      fn to_minutes(&self) -> Minutes {
+          Minutes(self.0 / 60.0)
+      }
+  }
+
+  struct Kilometers(f64);
+  struct Minutes(f64);
+
+  fn main() {
+      let distance = Meters::new(1500.0);
+      let time = Seconds::new(120.0);
+      
+      println!("距离：{:?} 米", distance.0);
+      println!("距离：{:?} 公里", distance.to_kilometers().0);
+      println!("时间：{:?} 秒", time.0);
+      println!("时间：{:?} 分钟", time.to_minutes().0);
+      
+      // 不能混用
+      // let speed = distance.0 / time.0;  // 类型不匹配
+  }
+
+newtype 实现 Trait
+
+.. code-block:: rust
+
+  use std::fmt;
+
+  struct Wrapper(Vec<String>);
+
+  impl fmt::Display for Wrapper {
+      fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+          write!(f, "[{}]", self.0.join(", "))
+      }
+  }
+
+  fn main() {
+      let w = Wrapper(vec![
+          String::from("hello"),
+          String::from("world"),
+      ]);
+      
+      println!("w = {}", w);  // 输出：w = [hello, world]
+  }
+
+类型别名实战
+
+.. code-block:: rust
+
+  // 简化复杂类型
+  type Thunk = Box<dyn Fn() + Send + 'static>;
+
+  fn main() {
+      let f: Thunk = Box::new(|| {
+          println!("hello");
+      });
+      
+      f();
+  }
+
+  // 带错误的 Result
+  type IoResult<T> = Result<T, std::io::Error>;
+
+  fn read_file(path: &str) -> IoResult<String> {
+      std::fs::read_to_string(path)
+  }
+
+never 类型应用
+
+.. code-block:: rust
+
+  fn main() {
+      // match 表达式中的 never 类型
+      let result: Result<i32, &str> = Ok(5);
+      
+      let value = match result {
+          Ok(v) => v,
+          Err(_) => panic!("出错了！"),  // ! 可以当 i32 用
+      };
+      
+      println!("值：{}", value);
+      
+      // 无限循环
+      let mut count = 0;
+      let x: i32 = loop {
+          count += 1;
+          if count == 10 {
+              break count * 2;  // 返回 i32
+          }
+      };
+      
+      println!("x = {}", x);
+  }
+
+?Sized 约束
+
+.. code-block:: rust
+
+  use std::fmt::Display;
+
+  // 可以接受 Sized 和 ?Sized 类型
+  fn print_it<T: ?Sized>(x: &T) 
+  where
+      T: Display 
+  {
+      println!("{}", x);
+  }
+
+  // 只能接受 Sized 类型
+  fn print_sized<T: Display>(x: T) {
+      println!("{}", x);
+  }
+
+  fn main() {
+      // &str 不是 Sized，但 &(&str) 是
+      print_it("hello");  // 
+      // print_sized("hello");  //  "hello" 是 &str，是 Sized 的
+      
+      // dyn Trait 不是 Sized
+      let boxed: Box<dyn Display> = Box::new(42);
+      print_it(&*boxed);  
+
+      // print_sized(*boxed);  // 不对
+  }
+
+newtype 用于 API 设计
+
+.. code-block:: rust
+
+  // 用 newtype 防止 API 误用
+  struct Email(String);
+  struct Password(String);
+
+  impl Email {
+      fn new(email: &str) -> Result<Self, &'static str> {
+          if email.contains('@') {
+              Ok(Email(email.to_string()))
+          } else {
+              Err("无效的邮箱地址")
+          }
+      }
+      
+      fn as_str(&self) -> &str {
+          &self.0
+      }
+  }
+
+  impl Password {
+      fn new(password: &str) -> Result<Self, &'static str> {
+          if password.len() >= 8 {
+              Ok(Password(password.to_string()))
+          } else {
+              Err("密码至少 8 位")
+          }
+      }
+  }
+
+  struct User {
+      email: Email,
+      password: Password,
+  }
+
+  fn main() {
+      let email = Email::new("larry@example.com").unwrap();
+      let password = Password::new("secure123").unwrap();
+      
+      let user = User {
+          email,
+          password,
+      };
+      
+      println!("用户邮箱：{}", user.email.as_str());
+      
+      // 不能直接用字符串
+      // let bad_user = User {
+      //     email: "bad@email",  // 类型不匹配
+      //     password: "123",     // 类型不匹配
+      // };
+  }
+
+配置类型安全
+
+.. code-block:: rust
+
+  // 用 newtype 防止配置错误
+  struct Port(u16);
+  struct Host(String);
+  struct Timeout(std::time::Duration);
+
+  impl Port {
+      fn new(port: u16) -> Result<Self, &'static str> {
+          if port == 0 || port > 65535 {
+              Err("无效端口")
+          } else {
+              Ok(Port(port))
+          }
+      }
+  }
+
+  struct DatabaseConfig {
+      host: Host,
+      port: Port,
+      timeout: Timeout,
+  }
+
+  fn connect(config: &DatabaseConfig) {
+      println!(
+          "连接到 {}:{}，超时 {:?}",
+          config.host.0,
+          config.port.0,
+          config.timeout.0
+      );
+  }
+
+  fn main() {
+      let config = DatabaseConfig {
+          host: Host(String::from("localhost")),
+          port: Port::new(5432).unwrap(),
+          timeout: Timeout(std::time::Duration::from_secs(30)),
+      };
+      
+      connect(&config);
+      
+      // 类型安全防止错误
+      // let bad_config = DatabaseConfig {
+      //     host: Host(String::from("localhost")),
+      //     port: Port(99999),  // 超出范围，但构造函数会检查
+      //     timeout: Timeout(std::time::Duration::from_secs(30)),
+      // };
+  }
 
 类型转换（Type Casting）
 -------------------------
@@ -236,6 +708,34 @@ Rust 能在大部分场景推断类型，但边界模糊时需要显式标注：
 ===================
 
 默认不可变（Immutable by Default）
+
+- 一个引用类型完整由 **四维度** 描述
+
+ - **是否引用**: 有没有 ``&`` 拥有 vs 借用
+ - **类型**: 是什么 ``str`` ``i32``
+ - **生命周期**: 引用指向的数据活多久 仅引用才有
+ - **可变性**: ``mut`` 可写 vs 只读
+  
+- 没有 ``&`` 的拥有型值 不涉及生命周期 数据归它自己管
+
+.. code-block:: text
+
+  letx : &'static str = "hi";
+    ↑ ↑    ↑   ↑
+    │ │    │   └── 值
+    │ │    └───────── 类型 (str = 字符串)
+    │ └───────────────── 生命周期 ('static = 活多久)
+    └──────────────────── 是不是引用 (& = 是借用)
+
+- ``'static`` 就是唯一一个有专属名字和内置含义的生命周期，表示活整个程序。
+  
+  - 其余生命周期都是 **泛型占位符** 名字自己起 惯例 ``'a`` ``'b`` ``'c``
+  - 类比: ``'static`` 之于生命周期 = ``i32`` 之于类型(具体的); ``'a`` = ``T`` (泛型的)
+  - ``'a`` 不是固定时长 是 **关系标记** 把多个引用的寿命绑在一起 具体多久由调用时决定
+  - ``'_`` 匿名生命周期 = 有但让编译器推; 简单情况可直接省略编译器按省略规则自动补
+  - 关键: ``'a`` 写在 ``<>`` 里像泛型 但占位的是 **存活区间** 而非类型 且 **零运行时开销** 编译完擦除
+
+
 
 不可变变量（Immutable Variable）
 -----------------------------------
