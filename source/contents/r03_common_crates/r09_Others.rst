@@ -435,7 +435,7 @@ derive_more 常用 derive：
    * - ``Index`` / ``IndexMut``
      - 索引操作
    * - ``Error``
-     - ``std::error::Error``（配合 Display）
+     - ``std::error::Error`` （配合 Display）
 
 derive_builder 常用属性：
 
