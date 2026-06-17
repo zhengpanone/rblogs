@@ -105,7 +105,7 @@
   }
 
 Rust 会在编译时计算所有变体中最大的那个尺寸，然后分配足够大的空间。还有一个标签（discriminant）来标识当前是哪个变体。
-可以通过 ``std::mem::size_of``查看：
+可以通过 ``std::mem::size_of`` 查看：
 
 .. code-block:: rust
 
@@ -310,23 +310,23 @@ strum使用
 
 .. code-block:: rust
 
-    use strum::{EnumIter, IntoEnumIterator};
+	use strum::{EnumIter, IntoEnumIterator};
 
-    #[derive(Debug, EnumIter)]
-    enum Status {
-        Pending,
+	#[derive(Debug, EnumIter)]
+	enum Status {
+			Pending,
 
-        Running,
+			Running,
 
-        Finished,
+			Finished,
+	}
+	#[test]
+	fn test_enum_into_str() {
+			for status in Status::iter() {
+					println!("{:?}", status);
+			}
     }
-    #[test]
-    fn test_enum_into_str() {
-        for status in Status::iter() {
-            println!("{:?}", status);
-        }
-    }
-}
+  }
 
 Option 枚举
 ========================
